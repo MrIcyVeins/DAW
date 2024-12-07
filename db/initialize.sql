@@ -1,9 +1,31 @@
-CREATE DATABASE crud_app;
-USE crud_app;
+-- CREATE DATABASE crud_app;
+-- USE crud_app;
+
+-- CREATE TABLE users (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     name VARCHAR(255) NOT NULL,
+--     email VARCHAR(255) NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user') DEFAULT 'user'
+);
+
+CREATE TABLE articles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE analytics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    page VARCHAR(100) NOT NULL,
+    visitor_ip VARCHAR(50) NOT NULL,
+    visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
