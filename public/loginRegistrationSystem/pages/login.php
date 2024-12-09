@@ -1,7 +1,5 @@
 <?php
 include '../database/db_connect.php';
-header("Location: /loginRegistrationSystem/pages/login.php");
-exit;
 
 $message = "";
 $toastClass = "";
