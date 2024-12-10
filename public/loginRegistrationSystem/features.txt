@@ -1,0 +1,28 @@
+Registration
+- password hashing in db when user registers - DONE
+- add forgot password reset with email / need production email - only dev reset for now - WIP  
+- error messages for passwords not matching, invalid email, invalid password - DONE
+- strong passwords required - DONE
+- allow only valid email addresses - DONE
+- verify email after register
+- create category admin for admin user 
+
+Security
+- Secure project credentials with .htaccess and config directory - using - WIP
+
+Website security - WIP
+- not allowing users to bypass/access certain pages that they do not have access to 
+- not allowing users to see website root files - via .htaccess
+- web application firewall - WAF (for SQL injections and other types of attacks)
+
+Subscribe to newsletter - WIP
+- send emails via PHP mailer > will require free SMTP configuration - WIP
+- create newsletter category/button
+
+Frontend design: content, buttons, functionalities etc
+- main page - dashboard page
+- categories pages ()
+- newsletter page
+
+Host on aeonfree - hosting zone created - only needs migration - AFTER WEBSITE IS DONE AND WORKING
+

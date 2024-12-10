@@ -8,11 +8,20 @@
 --     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 
+-- CREATE TABLE users (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     username VARCHAR(50) NOT NULL,
+--     password VARCHAR(255) NOT NULL,
+--     role ENUM('admin', 'user') DEFAULT 'user'
+-- );
+
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user') DEFAULT 'user'
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  verified TINYINT(1) NOT NULL DEFAULT 0;
+  verification_token VARCHAR(255) DEFAULT NULL;
 );
 
 CREATE TABLE articles (
@@ -27,5 +36,11 @@ CREATE TABLE analytics (
     page VARCHAR(100) NOT NULL,
     visitor_ip VARCHAR(50) NOT NULL,
     visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE password_resets (
+  email VARCHAR(255) NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

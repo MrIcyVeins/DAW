@@ -1,124 +1,119 @@
 <?php
-include '../database/db_connect.php';
+session_start();
+require_once "../database/db_connect.php";
 
-$message = "";
-$toastClass = "";
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Check if email already exists
-    $checkEmailStmt = $conn->prepare("SELECT email FROM userdata WHERE email = ?");
-    $checkEmailStmt->bind_param("s", $email);
-    $checkEmailStmt->execute();
-    $checkEmailStmt->store_result();
-
-    if ($checkEmailStmt->num_rows > 0) {
-        $message = "Email ID already exists";
-        $toastClass = "#007bff"; // Primary color
-    } else {
-        // Prepare and bind
-        $stmt = $conn->prepare("INSERT INTO userdata (username, email, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $username, $email, $password);
-
-        if ($stmt->execute()) {
-            $message = "Account created successfully";
-            $toastClass = "#28a745"; // Success color
-        } else {
-            $message = "Error: " . $stmt->error;
-            $toastClass = "#dc3545"; // Danger color
-        }
-
-        $stmt->close();
-    }
-
-    $checkEmailStmt->close();
-    $conn->close();
+if (isset($_SESSION['email'])) {
+    header("Location: dashboard.php");
+    exit();
 }
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validate password match
+    if ($password !== $confirm_password) {
+        $error = "Passwords do not match.";
+    } else {
+        // Validate email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Please enter a valid email address.";
+        } else {
+            $domain = substr(strrchr($email, "@"), 1);
+            if (!checkdnsrr($domain, "MX") && !checkdnsrr($domain, "A")) {
+                $error = "The email domain is invalid or cannot receive mail.";
+            } else {
+                // Check if user already exists
+                $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
+                $check->bind_param("s", $email);
+                $check->execute();
+                $checkRes = $check->get_result();
+                if ($checkRes->num_rows > 0) {
+                    $error = "Email already registered.";
+                } else {
+                    // Insert user
+                    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+                    $stmt = $conn->prepare("INSERT INTO users (email, password_hash) VALUES (?, ?)");
+                    $stmt->bind_param("ss", $email, $passwordHash);
+                    if ($stmt->execute()) {
+                        $newUserId = $stmt->insert_id;
+                        
+                        // Generate verification token
+                        $verificationToken = bin2hex(random_bytes(16));
+                        $upd = $conn->prepare("UPDATE users SET verification_token = ? WHERE id = ?");
+                        $upd->bind_param("si", $verificationToken, $newUserId);
+                        $upd->execute();
+
+                        // Send verification email using PHPMailer
+                        $mail = new PHPMailer(true);
+                        try {
+                            //Server settings
+                            $mail->SMTPDebug = 0; // Set to 2 to debug
+                            $mail->isSMTP();
+                            $mail->Host       = 'smtp.gmail.com'; // Use your SMTP server
+                            $mail->SMTPAuth   = true;
+                            $mail->Username   = 'your_email@gmail.com';
+                            $mail->Password   = 'your_email_password'; // For Gmail, you might need an App Password
+                            $mail->SMTPSecure = 'tls'; // or 'ssl'
+                            $mail->Port       = 587;   // '465' for SSL
+
+                            //Recipients
+                            $mail->setFrom('no-reply@example.com', 'MyApp');
+                            $mail->addAddress($email);
+
+                            // Content
+                            $verifyLink = "http://localhost/loginRegistrationSystem/pages/verify.php?token=$verificationToken";
+                            $mail->isHTML(true);
+                            $mail->Subject = 'Verify Your Email';
+                            $mail->Body    = "Thank you for registering.<br>Please verify your email by clicking the link below:<br><a href='$verifyLink'>$verifyLink</a>";
+                            
+                            $mail->send();
+                        } catch (Exception $e) {
+                            // If email fails to send, you can log or handle the error
+                        }
+
+                        $_SESSION['email'] = $email;
+                        header("Location: dashboard.php");
+                        exit();
+                    } else {
+                        $error = "Error registering user.";
+                    }
+                }
+            }
+        }
+    }
+}
+
+include "../includes/header.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<div class="container mt-5">
+    <h2>Register</h2>
+    <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+    <form method="POST" action="register.php">
+        <div class="mb-3">
+            <label>Email:</label>
+            <input type="email" name="email" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Password:</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label>Confirm Password:</label>
+            <input type="password" name="confirm_password" class="form-control" required />
+        </div>
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+    <p class="mt-2">Already have an account? <a href="login.php">Login here</a>.</p>
+</div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href=
-"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href=
-"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="shortcut icon" href=
-"https://cdn-icons-png.flaticon.com/512/295/295128.png">
-    <script src=
-"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Registration</title>
-</head>
-
-<body class="bg-light">
-    <div class="container p-5 d-flex flex-column align-items-center">
-        <?php if ($message): ?>
-            <div class="toast align-items-center text-white border-0" 
-          role="alert" aria-live="assertive" aria-atomic="true"
-                style="background-color: <?php echo $toastClass; ?>;">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <?php echo $message; ?>
-                    </div>
-                    <button type="button" class="btn-close
-                    btn-close-white me-2 m-auto" 
-                          data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        <?php endif; ?>
-        <form method="post" class="form-control mt-5 p-4"
-            style="height:auto; width:380px;
-            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-            rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
-            <div class="row text-center">
-                <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" style="color: green;"></i>
-                <h5 class="p-4" style="font-weight: 700;">Create Your Account</h5>
-            </div>
-            <div class="mb-2">
-                <label for="username"><i 
-                  class="fa fa-user"></i> User Name</label>
-                <input type="text" name="username" id="username"
-                  class="form-control" required>
-            </div>
-            <div class="mb-2 mt-2">
-                <label for="email"><i 
-                  class="fa fa-envelope"></i> Email</label>
-                <input type="text" name="email" id="email"
-                  class="form-control" required>
-            </div>
-            <div class="mb-2 mt-2">
-                <label for="password"><i 
-                  class="fa fa-lock"></i> Password</label>
-                <input type="text" name="password" id="password"
-                  class="form-control" required>
-            </div>
-            <div class="mb-2 mt-3">
-                <button type="submit" 
-                  class="btn btn-success
-                bg-success" style="font-weight: 600; display: block; margin: 0 auto;">Create
-                    Account</button>
-            </div>
-            <div class="mb-2 mt-4">
-                <p class="text-center" style="font-weight: 600; 
-                color: navy;">I have an Account <a href="./login.php"
-                        style="text-decoration: none;">Login</a></p>
-            </div>
-        </form>
-    </div>
-    <script>
-        let toastElList = [].slice.call(document.querySelectorAll('.toast'))
-        let toastList = toastElList.map(function (toastEl) {
-            return new bootstrap.Toast(toastEl, { delay: 3000 });
-        });
-        toastList.forEach(toast => toast.show());
-    </script>
-</body>
-
-</html>
+<?php include "../includes/footer.php"; ?>

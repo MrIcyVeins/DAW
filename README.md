@@ -26,3 +26,13 @@ sudo /opt/lampp/bin/mysql -u root
 ```
 sudo cp -r public/echonews/* /opt/lampp/htdocs/echonews/
 ```
+
+### Update local website
+```
+sudo cp -R public/loginRegistrationSystem/ /opt/lampp/htdocs/
+```
+
+### Update global .htaccess
+```
+sudo cp appache/.htaccess /opt/lampp/htdocs/loginRegistrationSystem/.htaccess
+```

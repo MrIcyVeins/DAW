@@ -4,3 +4,39 @@ RewriteEngine On
 # Match empty path only, then redirect
 RewriteRule ^$ /loginRegistrationSystem/pages/login.php [R=301,L]
 </IfModule>
+
+# Disable directory listing globally
+# Options -Indexes
+
+# # Prevent access to sensitive directories
+# <Directory "config">
+#     Require all denied
+# </Directory>
+
+# <Directory "PHPMailer">
+#     Require all denied
+# </Directory>
+
+# <Directory "database">
+#     Require all denied
+# </Directory>
+
+# <Directory "includes">
+#     Require all denied
+# </Directory>
+
+# Prevent access to .htaccess itself
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# Prevent access to .env files
+<Files ".env">
+    Require all denied
+</Files>
+
+<Files "features.txt">
+    Require all denied
+</Files>
+
+

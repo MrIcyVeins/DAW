@@ -1,0 +1,29 @@
+/* dashboard.css - styles specific to the dashboard page */
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+/* Example dashboard card styling */
+.dashboard-card {
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.navbar-brand {
+    font-weight: bolder;
+    color: white !important;
+}
+
+.nav-link {
+    color: white !important;
+}
+
+.nav-link:hover {
+    color: #cce6cc !important;
+}
