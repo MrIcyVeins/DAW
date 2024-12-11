@@ -1,12 +1,46 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Match empty path only, then redirect
-RewriteRule ^$ /loginRegistrationSystem/pages/login.php [R=301,L]
+# Redirectionare pentru path-uri
+RewriteRule ^$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^pages/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^pages$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^database/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^database$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^includes/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^includes$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
+RewriteRule ^login/$ /loginRegistrationSystem/pages/login.php [R=301,L]
+RewriteRule ^login$ /loginRegistrationSystem/pages/login.php [R=301,L]
+RewriteRule ^register/$ /loginRegistrationSystem/pages/register.php [R=301,L]
+RewriteRule ^register$ /loginRegistrationSystem/pages/register.php [R=301,L]
+RewriteRule ^css/$ /loginRegistrationSystem/pages/register.php [R=301,L]
+RewriteRule ^css$ /loginRegistrationSystem/pages/register.php [R=301,L]
+
+
+# Mascheaza 404 (not found) cu 403 (forbidden)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ - [F]
+
 </IfModule>
 
-# Disable directory listing globally
-# Options -Indexes
+# Previne listarea fisierelor din director
+Options -Indexes
+
+# Prevenirea accesului la .htaccess
+<Files ".htaccess">
+    Require all denied
+</Files>
+
+# Prevenirea accessului la alte fisiere 'secrete'
+<Files ".env">
+    Require all denied
+</Files>
+
+<Files "features.txt">
+    Require all denied
+</Files>
+
 
 # # Prevent access to sensitive directories
 # <Directory "config">
@@ -24,19 +58,4 @@ RewriteRule ^$ /loginRegistrationSystem/pages/login.php [R=301,L]
 # <Directory "includes">
 #     Require all denied
 # </Directory>
-
-# Prevent access to .htaccess itself
-<Files ".htaccess">
-    Require all denied
-</Files>
-
-# Prevent access to .env files
-<Files ".env">
-    Require all denied
-</Files>
-
-<Files "features.txt">
-    Require all denied
-</Files>
-
 
