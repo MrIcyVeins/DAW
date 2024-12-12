@@ -25,7 +25,7 @@ if ($token) {
     }
 }
 
-// Just show a simple message
+// Afiseaza un mesaj simplu
 ?>
 <?php include "../includes/header.php"; ?>
 <div class="container mt-5">

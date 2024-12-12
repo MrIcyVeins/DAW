@@ -30,3 +30,11 @@
         </div>
     </div>
 </nav>
+<?php if (!$user['verified']): ?>
+        <div class="alert alert-warning">
+            Your email is not verified. Please verify it to enjoy all features.
+            <form method="POST" action="resend_verification.php">
+                <button type="submit" class="btn btn-primary mt-2">Resend Verification Email</button>
+            </form>
+        </div>
+<?php endif; ?>

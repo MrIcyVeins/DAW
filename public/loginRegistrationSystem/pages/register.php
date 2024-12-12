@@ -2,6 +2,9 @@
 session_start();
 require_once "../database/db_connect.php";
 
+// include "../includes/header.php";
+// include "../includes/navbar.php";
+
 // Incarca valori din config.php
 $config = require __DIR__ . '/../config/config.php';
 

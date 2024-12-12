@@ -7,6 +7,12 @@ if (isset($_SESSION['email'])) {
     exit();
 }
 
+// Afiseaza mesajul de success dupa resetarea parolei
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
+    unset($_SESSION['success_message']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -50,6 +56,7 @@ include "../includes/header.php";
         <button type="submit" class="btn btn-success">Login</button>
     </form>
     <p class="mt-2">No account? <a href="register.php">Register here</a>.</p>
+    <p class="mt-2">Forgot password? <a href="reset_password.php">Reset password here</a>.</p>
 </div>
 
 <?php include "../includes/footer.php"; ?>

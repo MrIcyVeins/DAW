@@ -1,19 +1,5 @@
--- CREATE DATABASE crud_app;
--- USE crud_app;
-
--- CREATE TABLE users (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     name VARCHAR(255) NOT NULL,
---     email VARCHAR(255) NOT NULL,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- );
-
--- CREATE TABLE users (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     username VARCHAR(50) NOT NULL,
---     password VARCHAR(255) NOT NULL,
---     role ENUM('admin', 'user') DEFAULT 'user'
--- );
+-- CREATE DATABASE develop;
+-- USE develop;
 
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,6 +8,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   verified TINYINT(1) NOT NULL DEFAULT 0;
   verification_token VARCHAR(255) DEFAULT NULL;
+  last_email_sent_at TIMESTAMP NULL; -- not used at this time
 );
 
 CREATE TABLE articles (
