@@ -2,9 +2,27 @@
 session_start();
 require_once "../database/db_connect.php";
 
+// Incarca valori din config.php
+$config = require __DIR__ . '/../config/config.php';
+
+// Incarca librarii PHPMailer
+
+require '../PHPMailer/Exception.php';
+require '../PHPMailer/PHPMailer.php';
+require '../PHPMailer/SMTP.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+// Mapeaza valorile cu variabile
+$smtpHost = $config['smtp_host'];
+$smtpPort = $config['smtp_port'];
+$smtpEncryption = $config['smtp_encryption'];
+$smtpUsername = $config['smtp_username'];
+$smtpPassword = $config['smtp_password'];
+$fromEmail = $config['from_email'];
+$fromName = $config['from_name'];
+$toEmail = ''; // Inlocuieste cu email-ul catre care se trimite testul
 
 if (isset($_SESSION['email'])) {
     header("Location: dashboard.php");
@@ -41,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = "The email domain is invalid or cannot receive mail.";
             } else {
                 if (!preg_match($pattern, $password)) {
-                    $error = "Password must have atleast one lowercase letter, one uppercase letter, one digit, one special character and length of 8 characters.";
+                    $error = "Password must have atleast one lowercase letter, one uppercase letter, one digit, one special character and length of atleast 8 characters.";
                 } else {
                     // Verifica daca userul exista deja in baza de date
                     $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
@@ -64,33 +82,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $upd->bind_param("si", $verificationToken, $newUserId);
                             $upd->execute();
 
-                            // // Send verification email using PHPMailer
-                            // $mail = new PHPMailer(true);
-                            // try {
-                            //     //Server settings
-                            //     $mail->SMTPDebug = 0; // Set to 2 to debug
-                            //     $mail->isSMTP();
-                            //     $mail->Host       = 'smtp.gmail.com'; // Use your SMTP server
-                            //     $mail->SMTPAuth   = true;
-                            //     $mail->Username   = 'your_email@gmail.com';
-                            //     $mail->Password   = 'your_email_password'; // For Gmail, you might need an App Password
-                            //     $mail->SMTPSecure = 'tls'; // or 'ssl'
-                            //     $mail->Port       = 587;   // '465' for SSL
+                            // Send verification email using PHPMailer
+                            $mail = new PHPMailer(true);
+                            try {
+                                // Setari server
+                                $mail->isSMTP();                                     // Seteaza mailer sa foloseasca SMTP
+                                $mail->Host       = $smtpHost;                       // Specifica hostul SMTP
+                                $mail->SMTPAuth   = true;                            // Initializeaza autentificare in SMTP
+                                $mail->Username   = $smtpUsername;                   // Username SMTP
+                                $mail->Password   = $smtpPassword;                   // Parola SMTP 
+                                $mail->SMTPSecure = $smtpEncryption;                 // Activeaza encriptia
+                                $mail->Port       = $smtpPort;                       // port TCP pentru conexiune
 
-                            //     //Recipients
-                            //     $mail->setFrom('no-reply@example.com', 'MyApp');
-                            //     $mail->addAddress($email);
+                                // Seteaza trimitatorul si destinatarul
+                                $mail->setFrom($fromEmail, $fromName); // trimitator
+                                $mail->addAddress($email); // destinatar
 
-                            //     // Content
-                            //     $verifyLink = "http://localhost/loginRegistrationSystem/pages/verify.php?token=$verificationToken";
-                            //     $mail->isHTML(true);
-                            //     $mail->Subject = 'Verify Your Email';
-                            //     $mail->Body    = "Thank you for registering.<br>Please verify your email by clicking the link below:<br><a href='$verifyLink'>$verifyLink</a>";
+                                // Continutul emailului
+                                $verifyLink = "http://localhost/loginRegistrationSystem/pages/verify.php?token=$verificationToken";
+                                $mail->isHTML(true);
+                                $mail->Subject = 'Verify Your Email';
+                                $mail->Body    = "Thank you for registering.<br>Please verify your email by clicking the link below:<br><a href='$verifyLink'>$verifyLink</a>";
                                 
-                            //     $mail->send();
-                            // } catch (Exception $e) {
-                            //     // If email fails to send, you can log or handle the error
-                            // }
+                                $mail->send();
+                            } catch (Exception $e) {
+                                // If email fails to send, you can log or handle the error
+                            }
 
                             $_SESSION['email'] = $email;
                             header("Location: dashboard.php");

@@ -1,12 +1,12 @@
 SUMAR CERINTE
 
-1. Website cu baza de date MySQL si programat in PHP
-2. Prin intermediul aplicatiei se vor realiza operatii CRUD
-3. Va exista o pagina de autentificare/inregistrare de utilizatori
-4. Vor exista mai multe categorii de utilizatori ( fiecare categorie va avea anumite actiuni specifice )
+1. Website cu baza de date MySQL si programat in PHP - DONE
+2. Prin intermediul aplicatiei se vor realiza operatii CRUD - DONE
+3. Va exista o pagina de autentificare/inregistrare de utilizatori - DONE
+4. Vor exista mai multe categorii de utilizatori ( fiecare categorie va avea anumite actiuni specifice ) - WIP
 5. Aplicatia va contine mai multe pagini dinamice cu legaturi intre ele 
 6. Elemente statice ale site-ului (website analytics): vizitatori, accesari etc.
-7. Formular de contact cu posibilitatea de a transmite email-uri
+7. Formular de contact cu posibilitatea de a transmite email-uri ( contact us page )
 8. Integrare de informatii ( nu pagini, elemente ale acestora - parsare continut) - din surse externe 
-9. Terminarea sesiunii
+9. Terminarea sesiunii - DONE 
 
