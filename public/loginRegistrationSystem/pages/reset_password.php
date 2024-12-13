@@ -21,11 +21,14 @@ $smtpUsername = $config['smtp_username'];
 $smtpPassword = $config['smtp_password'];
 $fromEmail = $config['from_email'];
 $fromName = $config['from_name'];
+$recaptchaSiteKey = $config['recaptcha_site_key']; // Site Key reCAPTCHA
+$recaptchaSecretKey = $config['recaptcha_secret_key']; // Secret Key reCAPTCHA
 
 $error = "";
 $success = "";
 $token = isset($_GET['token']) ? $_GET['token'] : "";
 $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/';
+$recaptchaResponse = $_POST['g-recaptcha-response']; // Răspunsul reCAPTCHA
 
 // Manage requesturi POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -39,107 +42,138 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $res = $stmt->get_result();
 
-        if ($res->num_rows === 1) {
-            // Genereaza token pentru reset
-            $resetToken = bin2hex(random_bytes(16));
+        // Verificare reCAPTCHA
+        if (empty($recaptchaResponse)) {
+            $error = "Please complete the reCAPTCHA.";
+        } else {
+            // Verifică răspunsul reCAPTCHA prin API-ul Google
+            $verifyURL = 'https://www.google.com/recaptcha/api/siteverify';
+            $data = [
+                'secret' => $recaptchaSecretKey,
+                'response' => $recaptchaResponse,
+                'remoteip' => $_SERVER['REMOTE_ADDR']
+            ];
 
-            // Sterge token existent pentru acest email
-            $del = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
-            $del->bind_param("s", $email);
-            $del->execute();
+            // Utilizează cURL pentru a verifica răspunsul reCAPTCHA
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $verifyURL);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
 
-            // Insereaza noul token pentru reset
-            $ins = $conn->prepare("INSERT INTO password_resets (email, token) VALUES (?, ?)");
-            $ins->bind_param("ss", $email, $resetToken);
+            $responseKeys = json_decode($response, true);
 
-            if ($ins->execute()) {
-                // Trimite email cu PHPMailer
-                $mail = new PHPMailer(true);
-                try {
-                    // Setari SMTP
-                    $mail->isSMTP();
-                    $mail->Host       = $smtpHost;
-                    $mail->SMTPAuth   = true;
-                    $mail->Username   = $smtpUsername;
-                    $mail->Password   = $smtpPassword;
-                    $mail->SMTPSecure = $smtpEncryption;
-                    $mail->Port       = $smtpPort;
-
-                    // Trimitator si destinatar
-                    $mail->setFrom($fromEmail, $fromName);
-                    $mail->addAddress($email);
-
-                    // Continut email
-                    $resetLink = "http://localhost/loginRegistrationSystem/pages/reset_password.php?token=$resetToken";
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Reset Your Password';
-                    $mail->Body    = "You requested a password reset. Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
-
-                    // Trimite email
-                    $mail->send();
-                    $success = "A password reset link has been sent to your email.";
-                    // Redirectioneaza catre pagina de login cu mesaj de success
-                    session_start();
-                    $_SESSION['success_message'] = "A password reset link has been sent to your email. Please check your inbox.";
-                    header("Location: login.php");
-                    exit();
-                } catch (Exception $e) {
-                    $error = "Failed to send the reset email. Please try again.";
-                }
-            } else {
-                $error = "Error generating reset token.";
+            if (!$responseKeys['success']) {
+                $error = "reCAPTCHA verification failed. Please try again.";
             }
-        } else {
-            $error = "No account found with that email.";
         }
-    } elseif (!empty($token) && isset($_POST['new_password']) && isset($_POST['confirm_password'])) {
-        // Manage reset parola cu token
-        $new_password = $_POST['new_password'];
-        $confirm_password = $_POST['confirm_password'];
+        // Continuă doar dacă reCAPTCHA este valid
+        if (empty($error)) {
+            if ($res->num_rows === 1) {
+                // Genereaza token pentru reset
+                $resetToken = bin2hex(random_bytes(16));
 
-        if ($new_password !== $confirm_password) {
-            $error = "Passwords do not match.";
-        } else {
-            if (!preg_match($pattern, $new_password)) {
-                $error = "Password must have atleast one lowercase letter, one uppercase letter, one digit, one special character and length of atleast 8 characters.";
-            } else {
-                // Valideaza token
-                $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ?");
-                $stmt->bind_param("s", $token);
-                $stmt->execute();
-                $res = $stmt->get_result();
+                // Sterge token existent pentru acest email
+                $del = $conn->prepare("DELETE FROM password_resets WHERE email = ?");
+                $del->bind_param("s", $email);
+                $del->execute();
 
-                if ($res->num_rows === 1) {
-                    $row = $res->fetch_assoc();
-                    $email = $row['email'];
+                // Insereaza noul token pentru reset
+                $ins = $conn->prepare("INSERT INTO password_resets (email, token) VALUES (?, ?)");
+                $ins->bind_param("ss", $email, $resetToken);
 
-                    // Updateaza parola userului
-                    $passwordHash = password_hash($new_password, PASSWORD_BCRYPT);
-                    $upd = $conn->prepare("UPDATE users SET password_hash = ? WHERE email = ?");
-                    $upd->bind_param("ss", $passwordHash, $email);
+                if ($ins->execute()) {
+                    // Trimite email cu PHPMailer
+                    $mail = new PHPMailer(true);
+                    try {
+                        // Setari SMTP
+                        $mail->isSMTP();
+                        $mail->Host       = $smtpHost;
+                        $mail->SMTPAuth   = true;
+                        $mail->Username   = $smtpUsername;
+                        $mail->Password   = $smtpPassword;
+                        $mail->SMTPSecure = $smtpEncryption;
+                        $mail->Port       = $smtpPort;
 
-                    if ($upd->execute()) {
-                        // Sterge tokenul folosit
-                        $del = $conn->prepare("DELETE FROM password_resets WHERE token = ?");
-                        $del->bind_param("s", $token);
-                        $del->execute();
+                        // Trimitator si destinatar
+                        $mail->setFrom($fromEmail, $fromName);
+                        $mail->addAddress($email);
 
-                        // Inchide sesiunea si redirectioneaza catre pagina de login
-                        session_unset();
-                        session_destroy();
+                        // Continut email
+                        $resetLink = "http://localhost/loginRegistrationSystem/pages/reset_password.php?token=$resetToken";
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Reset Your Password';
+                        $mail->Body    = "You requested a password reset. Click the link below to reset your password:<br><a href='$resetLink'>$resetLink</a>";
 
+                        // Trimite email
+                        $mail->send();
+                        $success = "A password reset link has been sent to your email.";
+                        // Redirectioneaza catre pagina de login cu mesaj de success
+                        session_start();
+                        $_SESSION['success_message'] = "A password reset link has been sent to your email. Please check your inbox.";
                         header("Location: login.php");
                         exit();
-                    } else {
-                        $error = "Error updating your password.";
+                    } catch (Exception $e) {
+                        $error = "Failed to send the reset email. Please try again.";
                     }
                 } else {
-                    $error = "Invalid or expired token.";
+                    $error = "Error generating reset token.";
+                }
+            } else {
+                $error = "No account found with that email.";
+            }
+        } elseif (!empty($token) && isset($_POST['new_password']) && isset($_POST['confirm_password'])) {
+            // Manage reset parola cu token
+            $new_password = $_POST['new_password'];
+            $confirm_password = $_POST['confirm_password'];
+
+            if ($new_password !== $confirm_password) {
+                $error = "Passwords do not match.";
+            } else {
+                if (!preg_match($pattern, $new_password)) {
+                    $error = "Password must have atleast one lowercase letter, one uppercase letter, one digit, one special character and length of atleast 8 characters.";
+                } else {
+                    // Valideaza token
+                    $stmt = $conn->prepare("SELECT email FROM password_resets WHERE token = ?");
+                    $stmt->bind_param("s", $token);
+                    $stmt->execute();
+                    $res = $stmt->get_result();
+
+                    if ($res->num_rows === 1) {
+                        $row = $res->fetch_assoc();
+                        $email = $row['email'];
+
+                        // Updateaza parola userului
+                        $passwordHash = password_hash($new_password, PASSWORD_BCRYPT);
+                        $upd = $conn->prepare("UPDATE users SET password_hash = ? WHERE email = ?");
+                        $upd->bind_param("ss", $passwordHash, $email);
+
+                        if ($upd->execute()) {
+                            // Sterge tokenul folosit
+                            $del = $conn->prepare("DELETE FROM password_resets WHERE token = ?");
+                            $del->bind_param("s", $token);
+                            $del->execute();
+
+                            // Inchide sesiunea si redirectioneaza catre pagina de login
+                            session_unset();
+                            session_destroy();
+
+                            header("Location: login.php");
+                            exit();
+                        } else {
+                            $error = "Error updating your password.";
+                        }
+                    } else {
+                        $error = "Invalid or expired token.";
+                    }
                 }
             }
         }
     }
 }
+
 
 
 include "../includes/header.php";
@@ -153,6 +187,7 @@ include "../includes/header.php";
     <?php if (!empty($success)): ?>
         <div class="alert alert-success"><?php echo $success; ?></div>
     <?php endif; ?>
+    
 
     <?php if (empty($token)): ?>
         <!-- Show form to request reset link -->
@@ -161,7 +196,9 @@ include "../includes/header.php";
                 <label>Your Email Address:</label>
                 <input type="email" name="email" class="form-control" required />
             </div>
-            <button type="submit" class="btn btn-success">Send Reset Link</button>
+            <!-- Adaugă widget-ul reCAPTCHA -->
+            <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
+            <button type="submit" class="btn btn-success mt-3">Send Reset Link</button>
         </form>
     <?php else: ?>
         <!-- Show form to reset password -->
@@ -174,9 +211,14 @@ include "../includes/header.php";
                 <label>Confirm New Password:</label>
                 <input type="password" name="confirm_password" class="form-control" required />
             </div>
+            <!-- Adaugă widget-ul reCAPTCHA -->
+            <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
             <button type="submit" class="btn btn-success">Reset Password</button>
         </form>
     <?php endif; ?>
 </div>
+
+<!-- Include script-ul API reCAPTCHA -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <?php include "../includes/footer.php"; ?>

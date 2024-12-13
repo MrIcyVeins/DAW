@@ -24,7 +24,7 @@
             <form class="d-flex my-2 my-lg-0">
                 <a href="/loginRegistrationSystem/pages/logout.php" class="btn btn-light my-2 my-sm-0"
                    type="submit" style="font-weight:bolder;color:green;">
-                    Logout
+                   Logout
                 </a>
             </form>
         </div>

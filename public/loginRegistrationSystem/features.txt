@@ -1,20 +1,28 @@
-Registration
+Registration - DONE
 - password hashing in db when user registers - DONE
 - add forgot password reset with email - DONE  
 - error messages for passwords not matching, invalid email, invalid password - DONE
 - strong passwords required - (used regex and simple error message) - DONE
 - email verification warning message - DONE
 - verify email after register function - DONE 
-- add captcha for 
+- add captcha for login,register and reset_password - DONE
 
 Users
 - create category admin for admin user
+- create admin user ( add privileges for admin )
 
 Website security - DONE
 - not allowing users to bypass/access certain pages that they do not have access to - DONE 
 - not allowing users to see website root files - via .htaccess - DONE
 - secure project credentials with .htaccess and config directory - DONE
 - web application firewall - WAF (for SQL injections and other types of attacks) - OPTIONAL 
+
+Add comment section 
+- comment section for articles
+- add user comments 
+- require user account for comments 
+- add ability to like(heart) comments and articles
+- grant admin the ability to delete comments - OPTIONAL 
 
 Subscribe to newsletter - WIP
 - finish creating newsletter page and functionality - WIP 
