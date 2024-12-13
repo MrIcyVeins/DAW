@@ -32,9 +32,10 @@
 </nav>
 <?php if (!$user['verified']): ?>
         <div class="alert alert-warning">
-            Your email is not verified. Please verify it to enjoy all features.
+            <!-- Your email is not verified. Please verify it to enjoy all features. -->
             <form method="POST" action="resend_verification.php">
-                <button type="submit" class="btn btn-primary mt-2">Resend Verification Email</button>
+                <p class="mt-2">Your email is not verified. Please <a href="resend_verification.php">verify</a> it to enjoy all features.</p>
+                <!-- <button type="submit" class="btn btn-primary mt-2">Resend Verification Email</button> -->
             </form>
         </div>
 <?php endif; ?>

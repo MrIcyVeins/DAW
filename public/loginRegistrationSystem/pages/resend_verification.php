@@ -66,7 +66,7 @@ if ($res->num_rows === 1) {
         $mail->Body = "Thank you for registering.<br>Please verify your email by clicking the link below:<br><a href='$verifyLink'>$verifyLink</a>";
 
         $mail->send();
-        $_SESSION['message'] = "Verification email has been resent successfully.";
+        $_SESSION['message'] = "Verification email has been sent successfully.";
     } catch (Exception $e) {
         $_SESSION['message'] = "Verification email could not be sent. Error: " . $mail->ErrorInfo;
     }
