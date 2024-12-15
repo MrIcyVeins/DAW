@@ -1,3 +1,5 @@
+*Zone.Identifier
+*.Zone.Identifier
 config.php
 config*
 # Logs
