@@ -2,23 +2,17 @@
 session_start();
 require_once "../database/db_connect.php";
 
+// Redirect to login if not logged in
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     exit();
 }
 
-// Get user information
-$email = $_SESSION['email'];
-$stmt = $conn->prepare("SELECT verified FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$res = $stmt->get_result();
-$user = $res->fetch_assoc();
-
 // Get any session message
 $message = isset($_SESSION['message']) ? $_SESSION['message'] : '';
 unset($_SESSION['message']);
 
+// Include header and navbar
 include "../includes/header.php";
 include "../includes/navbar.php";
 ?>
