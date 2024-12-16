@@ -33,15 +33,16 @@ Subscribe to newsletter - WIP
 
 Frontend design: content, buttons, functionalities etc
 - design navbar with:
-    > Dashboard button - DONE
-    > Categories buttons - WIP 
+    > Dashboard button - DONE // replaced with HOME
+    > Categories buttons - not needed anymore
     > Logout button - DONE 
-    > Profile button/icon > profile.png
-    > Show name of the user that is logged in
-- main page - dashboard page
-- categories pages ()
-- contact us page (form page)
-- newsletter page
+    > Login/Register buttons - DONE
+    > Profile button/icon > profile.png - TBD
+    > Show name of the user that is logged in - TBD
+- main page - dashboard page - replaced with Home - WIP
+- categories pages () - DONE
+- contact us page (form page) - DONE
+- newsletter page - DONE
 
 Bugs
 - fix reset_password not strong vulnerability - DONE

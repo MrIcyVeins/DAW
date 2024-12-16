@@ -2,6 +2,8 @@
 session_start();
 require_once "../database/db_connect.php";
 
+include "../includes/header_simple.php";
+
 // Încarcă configurația
 $config = require __DIR__ . '/../config/config.php';
 

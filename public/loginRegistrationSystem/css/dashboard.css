@@ -1,29 +1,117 @@
-/* dashboard.css - styles specific to the dashboard page */
+/* Center the logo above the navbar */
+.logo-container {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
 
-h2 {
-    font-size: 2rem;
+/* Style the logo image */
+.site-logo {
+    max-width: 150px;
+    max-height: 150px;
+    display: inline-block;
+}
+
+/* Navbar Styles */
+.navbar {
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    background-color: white !important; /* Ensure consistent background color */
+    justify-content: center;
+}
+
+/* Navbar Items */
+.navbar-nav {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-item {
+    margin: 0 15px;
+}
+
+/* Line above each nav-link */
+.nav-item-line {
+    position: relative;
+    color: #333;
+    text-decoration: none;
+    font-size: 1rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: 0;
+    padding: 0.5rem 0;
 }
 
-/* Example dashboard card styling */
-.dashboard-card {
-    background-color: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+.nav-item-line::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #000000;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: all 0.3s ease;
 }
 
-.navbar-brand {
-    font-weight: bolder;
-    color: white !important;
+.nav-item-line:hover::before {
+    transform: scaleX(1) translateY(5px);
 }
 
 .nav-link {
-    color: white !important;
+    color: #333 !important;
+    text-align: center;
 }
 
 .nav-link:hover {
-    color: #cce6cc !important;
+    color: #000000 !important;
+    font-weight: bold;
+}
+
+/* Login & Register Buttons */
+.navbar .btn-outline-success {
+    border: 2px solid #248cab;
+    color: #248cab !important;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 15px;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.navbar .btn-outline-success:hover {
+    background-color: #248cab;
+    color: white !important;
+}
+
+.navbar .btn-success {
+    background-color: #248cab;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 15px;
+    margin-left: 10px;
+    border: none;
+    
+/* Logout button in red for contrast */
+.btn-outline-danger {
+    border: 2px solid #dc3545;
+    color: #dc3545 !important; /* Make text visible by default */
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 15px;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545; /* Red background on hover */
+    color: white !important; /* White text on hover */
 }

@@ -41,6 +41,11 @@ Options -Indexes
     Require all denied
 </Files>
 
+# Permite accesul public pentru urmatoarele extensii
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|otf|eot|webp)$">
+    Require all granted
+</FilesMatch>
+
 
 # # Prevent access to sensitive directories
 # <Directory "config">

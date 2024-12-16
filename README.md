@@ -21,11 +21,11 @@ sudo /opt/lampp/lampp status
 sudo /opt/lampp/bin/mysql -u root
 ```
 
-### Update xampp htdocs with latest code 
+<!-- ### Update xampp htdocs with latest code 
 
 ```
 sudo cp -r public/echonews/* /opt/lampp/htdocs/echonews/
-```
+``` -->
 
 ### Update local website
 ```

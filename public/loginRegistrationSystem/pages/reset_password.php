@@ -10,6 +10,8 @@ require '../PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+include "../includes/header_simple.php";
+
 // Incarca cofiguratia
 $config = require __DIR__ . '/../config/config.php';
 

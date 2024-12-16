@@ -8,6 +8,7 @@ require_once "../database/db_connect.php";
 
 // Check if user is logged in and fetch verification status
 $user = null; // Initialize user variable
+$showVerificationWarning = false; // Flag to show email verification warning
 if (isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
     $stmt = $conn->prepare("SELECT verified FROM users WHERE email = ?");
@@ -15,54 +16,61 @@ if (isset($_SESSION['email'])) {
     $stmt->execute();
     $res = $stmt->get_result();
     $user = $res->fetch_assoc();
+    $showVerificationWarning = !$user['verified']; // Show warning if user is not verified
 }
 ?>
 
-<nav class="navbar navbar-expand-sm navbar-light bg-success">
+<div class="logo-container">
+    <a href="/loginRegistrationSystem/pages/dashboard.php">
+        <img src="/loginRegistrationSystem/assets/logo.png" alt="Logo" class="site-logo">
+    </a>
+</div>
+
+<nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="/loginRegistrationSystem/pages/dashboard.php" style="font-weight:bold; color:white;">Dashboard</a>
-        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapsibleNavId" aria-controls="collapsibleNavId"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="collapsibleNavId">
-            <ul class="navbar-nav m-auto mt-2 mt-lg-0">
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/loginRegistrationSystem/pages/category1.php">Category1</a>
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/dashboard.php">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/loginRegistrationSystem/pages/category2.php">Category2</a>
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/category1.php">World News & Politics</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/loginRegistrationSystem/pages/category3.php">Category3</a>
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/category2.php">Science, Tech & Innovation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/loginRegistrationSystem/pages/newsletter.php">Newsletter</a>
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/category3.php">Lifestyle & Culture</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/loginRegistrationSystem/pages/contact.php">Contact Us</a>
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/newsletter.php">Newsletter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-item-line nav-link" href="/loginRegistrationSystem/pages/contact.php">Contact Us</a>
                 </li>
             </ul>
-            <form class="d-flex my-2 my-lg-0">
+            <div class="d-flex">
                 <?php if (!isset($_SESSION['email'])): ?>
-                    <!-- Show login and register buttons for guests -->
-                    <a href="/loginRegistrationSystem/pages/login.php" class="btn btn-light me-2"
-                       style="font-weight:bolder;color:green;">Login</a>
-                    <a href="/loginRegistrationSystem/pages/register.php" class="btn btn-outline-light"
-                       style="font-weight:bolder;color:white;">Register</a>
+                    <!-- Login and Register Buttons -->
+                    <a href="/loginRegistrationSystem/pages/login.php" class="btn btn-outline-success">Login</a>
+                    <a href="/loginRegistrationSystem/pages/register.php" class="btn btn-outline-success">Register</a>
                 <?php else: ?>
-                    <!-- Show logout button for authenticated users -->
-                    <a href="/loginRegistrationSystem/pages/logout.php" class="btn btn-light"
-                       style="font-weight:bolder;color:green;">Logout</a>
+                    <!-- Logout Button -->
+                    <a href="/loginRegistrationSystem/pages/logout.php" class="btn btn-outline-danger">Logout</a>
                 <?php endif; ?>
-            </form>
+            </div>
         </div>
     </div>
 </nav>
 
-<?php if (!isset($_SESSION['email'])): ?>
-    <!-- Display encouragement message for guests -->
+<?php if (isset($_SESSION['email']) && $showVerificationWarning): ?>
+    <!-- Email Verification Warning for Logged-In Users -->
+    <div class="alert alert-warning text-center mb-0">
+        Your email is not verified. <a href="/loginRegistrationSystem/pages/resend_verification.php">Verify your email</a> to unlock all features.
+    </div>
+<?php elseif (!isset($_SESSION['email'])): ?>
+    <!-- Guest Encouragement Message -->
     <div class="alert alert-info text-center mb-0">
         You are browsing as a guest. <a href="/loginRegistrationSystem/pages/register.php">Register</a> now to enjoy exclusive features!
     </div>
