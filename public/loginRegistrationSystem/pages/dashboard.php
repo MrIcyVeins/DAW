@@ -4,7 +4,7 @@ require_once "../database/db_connect.php";
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    header("Location: login");
     exit();
 }
 

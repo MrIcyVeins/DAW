@@ -9,13 +9,17 @@ RewriteRule ^database/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
 RewriteRule ^database$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
 RewriteRule ^includes/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
 RewriteRule ^includes$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^login/$ /loginRegistrationSystem/pages/login.php [R=301,L]
-RewriteRule ^login$ /loginRegistrationSystem/pages/login.php [R=301,L]
+RewriteRule ^login/$ /loginRegistrationSystem/pages/login [R=301,L]
+RewriteRule ^login$ /loginRegistrationSystem/pages/login [R=301,L]
 RewriteRule ^register/$ /loginRegistrationSystem/pages/register.php [R=301,L]
 RewriteRule ^register$ /loginRegistrationSystem/pages/register.php [R=301,L]
 RewriteRule ^css/$ /loginRegistrationSystem/pages/register.php [R=301,L]
 RewriteRule ^css$ /loginRegistrationSystem/pages/register.php [R=301,L]
 
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)/?$ $1.php [L]
 
 # Mascheaza 404 (not found) cu 403 (forbidden)
 RewriteCond %{REQUEST_FILENAME} !-f
