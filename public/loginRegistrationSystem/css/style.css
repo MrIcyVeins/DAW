@@ -24,6 +24,7 @@ html, body {
 /* Logo Styling */
 .logo-container {
     text-align: center;
+    background-color: #525252;
 }
 
 .logo-container img.site-logo {
@@ -70,7 +71,7 @@ html, body {
 }
 
 footer {
-    background-color: #f6f6f6;
+    background-color: #727272;
     text-align: center;
     padding: 20px 0;
     border-top: 1px solid #ccc;
@@ -142,7 +143,7 @@ footer {
     align-items: center;
     gap: 30px; /* Space between links */
     margin: 0 auto; /* Ensures the links are centered */
-    margin-left: 10%; /* Add margin to move the links to the right */
+    margin-left: 12%; /* Add margin to move the links to the right */
     list-style: none; /* Remove bullets */
     padding: 0;
 }

@@ -1,4 +1,4 @@
-<footer style="border-top: 1px solid #ccc; padding: 20px 0; background-color:rgb(238, 238, 238);">
+<footer style="border-top: 1px solid #ccc; padding: 20px 0; background-color:rgb(224, 224, 224);">
     <div class="container text-center">
         <!-- Contact Us and Subscribe links -->
         <p style="margin-bottom: 20px; font-weight: bold; font-size: 16px;">
