@@ -17,9 +17,9 @@ if (session_status() === PHP_SESSION_NONE) {
     <link rel="stylesheet" href="/loginRegistrationSystem/css/style.css">
 </head>
 <body>
-    <!-- Centered Logo -->
-    <div class="logo-container text-center my-4">
+    <!-- Transparent Logo Container
+    <div class="logo-container">
         <a href="/loginRegistrationSystem/pages/dashboard.php">
             <img src="/loginRegistrationSystem/assets/logo.png" alt="EchoNews Logo" class="site-logo">
         </a>
-    </div>
+    </div> -->

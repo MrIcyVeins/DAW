@@ -1,58 +1,45 @@
 <?php
-// login.php
-
 session_start();
 require_once "../database/db_connect.php";
 
-include "../includes/header_simple.php";
-
-// Încarcă configurația
+// Include configuration
 $config = require __DIR__ . '/../config/config.php';
 
-// Atribuie cheile reCAPTCHA din config
+// reCAPTCHA keys
 $recaptchaSiteKey = $config['recaptcha_site_key'];
 $recaptchaSecretKey = $config['recaptcha_secret_key'];
 
-// Dacă utilizatorul este deja autentificat, redirecționează la dashboard
+// Redirect to dashboard if already logged in
 if (isset($_SESSION['email'])) {
     header("Location: dashboard.php");
     exit();
 }
 
-// Inițializează sau recuperează numărul de încercări eșuate din sesiune
-if (!isset($_SESSION['failed_attempts'])) {
-    $_SESSION['failed_attempts'] = 0;
-}
-
-// Afișează mesajul de succes după resetarea parolei
-if (isset($_SESSION['success_message'])) {
-    echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success_message']) . '</div>';
-    unset($_SESSION['success_message']);
-}
-
-// Inițializează mesajul de eroare
+// Initialize error message and failed attempts counter
 $error = "";
+if (!isset($_SESSION['failed_attempts'])) {
+    $_SESSION['failed_attempts'] = 0; // Initialize the failed attempts counter
+}
 
-// Gestionează trimiterea formularului
+// Handle POST request for login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $recaptchaRequired = $_SESSION['failed_attempts'] >= 3; // Cere reCAPTCHA după 3 încercări eșuate
+    $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+
+    // Check if reCAPTCHA is required
+    $recaptchaRequired = $_SESSION['failed_attempts'] >= 3;
 
     if ($recaptchaRequired) {
-        // Verifică răspunsul reCAPTCHA
-        if (isset($_POST['g-recaptcha-response'])) {
-            $recaptchaResponse = $_POST['g-recaptcha-response'];
+        // reCAPTCHA validation
+        if (!empty($recaptchaResponse)) {
             $verifyURL = 'https://www.google.com/recaptcha/api/siteverify';
-
-            // Pregătește datele pentru cererea POST
             $data = [
                 'secret' => $recaptchaSecretKey,
                 'response' => $recaptchaResponse,
                 'remoteip' => $_SERVER['REMOTE_ADDR']
             ];
 
-            // Utilizează cURL pentru a face cererea POST
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $verifyURL);
             curl_setopt($ch, CURLOPT_POST, true);
@@ -62,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             curl_close($ch);
 
             $responseKeys = json_decode($response, true);
-
             if (!$responseKeys['success']) {
                 $error = "reCAPTCHA verification failed. Please try again.";
             }
@@ -71,12 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // If no error, verify login credentials
     if (empty($error)) {
-        // Continuă cu verificarea autentificării
         $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE email = ?");
-        if ($stmt === false) {
-            $error = "Database error: Unable to prepare the query.";
-        } else {
+        if ($stmt) {
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $res = $stmt->get_result();
@@ -84,10 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($res->num_rows === 1) {
                 $row = $res->fetch_assoc();
                 if (password_verify($password, $row['password_hash'])) {
-                    // Autentificare reușită
-                    session_regenerate_id(true); // Securizează sesiunea
+                    // Successful login
                     $_SESSION['email'] = $email;
-                    $_SESSION['failed_attempts'] = 0; // Resetează încercările eșuate
+                    $_SESSION['failed_attempts'] = 0; // Reset failed attempts
                     header("Location: dashboard.php");
                     exit();
                 } else {
@@ -96,45 +79,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $error = "Invalid email or password.";
             }
+        } else {
+            $error = "Database error occurred.";
         }
     }
 
-    // Incrementază numărul de încercări eșuate dacă autentificarea eșuează
+    // Increment failed attempts if login fails
     if (!empty($error)) {
         $_SESSION['failed_attempts']++;
     }
 }
 
-include "../includes/header.php";
+include "../includes/header_simple.php";
 ?>
 
-<div class="container mt-5">
-    <h2>Login</h2>
-    <?php if (!empty($error)): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    <form method="POST" action="login.php">
-        <div class="mb-3">
-            <label>Email:</label>
-            <input type="email" name="email" class="form-control" required />
-        </div>
-        <div class="mb-3">
-            <label>Password:</label>
-            <input type="password" name="password" class="form-control" required />
-        </div>
-        <?php if ($_SESSION['failed_attempts'] >= 3): ?>
-            <!-- Afișează widget-ul reCAPTCHA v2 după 3 încercări eșuate -->
-            <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
+<!-- Background Wrapper -->
+<div class="login-wrapper">
+    <!-- Logo Image at the Top -->
+    <div class="logo-container">
+        <img src="/loginRegistrationSystem/assets/logo.png" alt="EchoNews Logo" class="site-logo">
+    </div>
+    
+    <!-- Login Form -->
+    <div class="login-container">
+        <h2 class="text-center mb-4">Login</h2>
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-        <button type="submit" class="btn btn-success mt-3">Login</button>
-    </form>
-    <p class="mt-2">Don't have an account? <a href="register.php">Register here</a>.</p>
-    <p class="mt-2">Forgot your password? <a href="reset_password.php">Reset it here</a>.</p>
+        <form method="POST" action="login.php">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" id="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
+            <!-- Conditionally Show reCAPTCHA -->
+            <?php if ($_SESSION['failed_attempts'] >= 3): ?>
+                <div class="g-recaptcha mb-3" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
+            <?php endif; ?>
+            <button type="submit" class="btn btn-success w-100">Login</button>
+        </form>
+        <p class="text-center mt-3">Don't have an account? <a href="register.php">Register here</a>.</p>
+        <p class="text-center">Forgot your password? <a href="reset_password.php">Reset it here</a>.</p>
+    </div>
 </div>
 
-<!-- Include script-ul API reCAPTCHA doar dacă este necesar -->
+<!-- reCAPTCHA API script (conditionally included) -->
 <?php if ($_SESSION['failed_attempts'] >= 3): ?>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <?php endif; ?>
-
-<?php include "../includes/footer.php"; ?>

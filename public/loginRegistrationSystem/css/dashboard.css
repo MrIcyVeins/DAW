@@ -37,12 +37,14 @@
     position: relative;
     color: #333;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 15px; /* Set font size to 15px */
     font-weight: bold;
     text-transform: uppercase;
     display: inline-block;
     margin: 0;
     padding: 0.5rem 0;
+    white-space: nowrap; /* Prevent wrapping to the next line */
+    line-height: 1; /* Adjust spacing for single-line alignment */
 }
 
 .nav-item-line::before {
@@ -65,10 +67,12 @@
 .nav-link {
     color: #333 !important;
     text-align: center;
+    font-size: 15px !important; /* Set font size to 15px */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 .nav-link:hover {
-    color: #000000 !important;
+    color: #248cab !important;
     font-weight: bold;
 }
 
@@ -76,11 +80,12 @@
 .navbar .btn-outline-success {
     border: 2px solid #248cab;
     color: #248cab !important;
-    font-size: 0.9rem;
+    font-size: 15px; /* Set font size to 15px */
     font-weight: bold;
     text-transform: uppercase;
-    padding: 5px 15px;
-    margin-left: 10px;
+    padding: 5px 10px; /* Adjust button padding */
+    margin-left: 5px;
+    white-space: nowrap; /* Prevent text wrapping */
     transition: all 0.3s ease;
 }
 
@@ -89,29 +94,20 @@
     color: white !important;
 }
 
-.navbar .btn-success {
-    background-color: #248cab;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 5px 15px;
-    margin-left: 10px;
-    border: none;
-    
-/* Logout button in red for contrast */
-.btn-outline-danger {
+/* Logout Button */
+.navbar .btn-outline-danger {
     border: 2px solid #dc3545;
-    color: #dc3545 !important; /* Make text visible by default */
-    font-size: 0.9rem;
+    color: #dc3545 !important;
+    font-size: 15px; /* Set font size to 15px */
     font-weight: bold;
     text-transform: uppercase;
-    padding: 5px 15px;
-    margin-left: 10px;
+    padding: 5px 10px; /* Adjust button padding */
+    margin-left: 5px;
+    white-space: nowrap; /* Prevent text wrapping */
     transition: all 0.3s ease;
 }
 
-.btn-outline-danger:hover {
-    background-color: #dc3545; /* Red background on hover */
-    color: white !important; /* White text on hover */
+.navbar .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white !important;
 }

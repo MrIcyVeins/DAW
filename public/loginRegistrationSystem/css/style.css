@@ -1,98 +1,81 @@
 /* General improvements to global styles */
 
-/* Make navbar uniform across all pages */
-.navbar {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 15px;
-    padding: 10px 20px;
-    background-color: #198754; /* Green success background */
-    border-bottom: 1px solid #176c43;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
-
-/* Ensure consistent white color for the navbar brand and links */
-.navbar-brand {
-    font-weight: bolder;
-    color: white !important;
-    font-size: 1.25rem;
-}
-
-.navbar-brand .site-logo {
-    max-width: 150px; /* Set a uniform width */
-    max-height: 150px; /* Set a uniform height */
-    display: block; /* Ensures block behavior */
-    margin: 0 auto; /* Centers the logo */
-}
-
-/* Navigation links */
-.nav-link {
-    color: white !important;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.nav-link:hover {
-    color: #cce6cc !important; /* Lighter green hover effect */
-    font-weight: bold;
-}
-
-/* Buttons */
-.btn {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-.btn-outline-success {
-    border: 2px solid white;
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-outline-success:hover {
-    background-color: white;
-    color: #198754;
-}
-
-/* Logout button in red for contrast */
-.btn-outline-danger {
-    border: 2px solid #dc3545;
-    color: #dc3545 !important; /* Make text visible by default */
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 5px 15px;
-    margin-left: 10px;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-danger:hover {
-    background-color: #dc3545; /* Red background on hover */
-    color: white !important; /* White text on hover */
-}
-
-/* Ensure consistent background color */
+/* Remove default body margin and padding */
 html, body {
-    background-color: #f6f6f6;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100%; /* Ensure full height */
+    width: 100%;
+    background: rgb(247, 247, 247) !important;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-/* General container styling */
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
+/* Static background for login page with fixed size */
+.login-wrapper {
+    background: url('/loginRegistrationSystem/assets/background.png') no-repeat center center fixed;
+    background-size: 1920px 1720px; /* Fixed size for the background image */
+    background-attachment: fixed;
+    background-position: center;
+    height: 100vh; /* Full viewport height */
+    width: 100%;   /* Full viewport width */
+    margin: 0;
+    padding: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #333;
+/* Logo Styling */
+.logo-container {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
-/* Center and size the global site logo */
-.site-logo {
-    max-width: 150px;
-    max-height: 150px;
+.logo-container img.site-logo {
+    width: 150px; /* Default size for large screens */
+    height: auto;
     display: block;
-    margin: 20px auto; /* Add spacing above and below */
+    margin: 0 auto;
 }
+
+/* Media Queries for Smaller Screens */
+@media (max-width: 992px) { /* Tablets and medium devices */
+    .logo-container img.site-logo {
+        width: 120px; /* Slightly smaller logo */
+    }
+}
+
+@media (max-width: 768px) { /* Small devices like phones */
+    .logo-container img.site-logo {
+        width: 100px; /* Smaller logo for small screens */
+    }
+}
+
+@media (max-width: 480px) { /* Very small screens */
+    .logo-container img.site-logo {
+        width: 80px; /* Smallest size for very small devices */
+    }
+}
+
+/* Center the login form */
+.login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95); /* Slight white transparency */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Ensure footer stays at the bottom */
+/* footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 10px 0;
+    text-align: center;
+    border-top: 1px solid #c4c2c2;
+} */
