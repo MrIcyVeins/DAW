@@ -11,7 +11,7 @@ $recaptchaSecretKey = $config['recaptcha_secret_key'];
 
 // Redirect to dashboard if already logged in
 if (isset($_SESSION['email'])) {
-    header("Location: dashboard.php");
+    header("Location: dashboard");
     exit();
 }
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Successful login
                     $_SESSION['email'] = $email;
                     $_SESSION['failed_attempts'] = 0; // Reset failed attempts
-                    header("Location: dashboard.php");
+                    header("Location: dashboard");
                     exit();
                 } else {
                     $error = "Invalid email or password.";
@@ -106,7 +106,7 @@ include "../includes/header_simple.php";
         <?php if (!empty($error)): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-        <form method="POST" action="login.php">
+        <form method="POST" action="login">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" name="email" id="email" class="form-control" required>
@@ -117,12 +117,14 @@ include "../includes/header_simple.php";
             </div>
             <!-- Conditionally Show reCAPTCHA -->
             <?php if ($_SESSION['failed_attempts'] >= 3): ?>
-                <div class="g-recaptcha mb-3" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
+                <div class="recaptcha-container mb-3">
+                    <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
+                </div>
             <?php endif; ?>
             <button type="submit" class="btn btn-success w-100">Login</button>
         </form>
-        <p class="text-center mt-3">Don't have an account? <a href="register.php">Register here</a>.</p>
-        <p class="text-center">Forgot your password? <a href="reset_password.php">Reset it here</a>.</p>
+        <p class="text-center mt-3">Don't have an account? <a href="register">Register here</a>.</p>
+        <p class="text-center">Forgot your password? <a href="reset_password">Reset it here</a>.</p>
     </div>
 </div>
 

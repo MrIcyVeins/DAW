@@ -2,12 +2,11 @@
 
 /* Remove default body margin and padding */
 html, body {
-    margin: 0 !important;
-    padding: 0 !important;
     height: 100%; /* Ensure full height */
-    width: 100%;
-    background: rgb(247, 247, 247) !important;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth; /* Enable smooth scrolling */
+    font-family: 'Merriweather', serif;
 }
 
 /* Static background for login page with fixed size */
@@ -25,8 +24,6 @@ html, body {
 /* Logo Styling */
 .logo-container {
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
 }
 
 .logo-container img.site-logo {
@@ -34,6 +31,9 @@ html, body {
     height: auto;
     display: block;
     margin: 0 auto;
+    border-left: 5px solid rgb(68, 68, 68);  /* Thick black border on the left */
+    border-right: 5px solid rgb(68, 68, 68); /* Thick black border on the right */
+    border-bottom: 5px solid rgb(68, 68, 68); /* Thick black border at the bottom */
 }
 
 /* Media Queries for Smaller Screens */
@@ -69,13 +69,230 @@ html, body {
     width: 100%;
 }
 
-/* Ensure footer stays at the bottom */
-/* footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    padding: 10px 0;
+footer {
+    background-color: #f6f6f6;
     text-align: center;
-    border-top: 1px solid #c4c2c2;
-} */
+    padding: 20px 0;
+    border-top: 1px solid #ccc;
+}
+
+/* Center the reCAPTCHA widget */
+.recaptcha-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    width: 100%;             /* Ensure full width for proper centering */
+    margin-bottom: 1rem;     /* Add spacing below the reCAPTCHA */
+}
+
+/* General Wrapper for Pages with Backgrounds */
+.page-wrapper {
+    background: url('/loginRegistrationSystem/assets/newsletter.png') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh; /* Full viewport height */
+    width: 100%;   /* Full viewport width */
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Centered content container */
+.page-content-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95); /* Slight white transparency */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Move Navbar Links to the Left */
+.navbar-nav {
+    display: flex;
+    justify-content: flex-start; /* Align links to the left */
+    margin-left: 0; /* Remove any default margin */
+    padding-left: 0; /* Ensure it starts from the very left */
+}
+
+/* Move Buttons (Login, Register, Logout) to the Left */
+.d-flex {
+    margin-left: 0; /* Remove extra margin */
+    justify-content: flex-start; /* Align buttons to the left */
+}
+
+/* Custom Navbar */
+.custom-navbar {
+    display: flex;
+    justify-content: center; /* Center the navbar content */
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Centered Navbar Links */
+.custom-navbar-links {
+    display: flex;
+    justify-content: center; /* Center the links */
+    align-items: center;
+    gap: 30px; /* Space between links */
+    margin: 0 auto; /* Ensures the links are centered */
+    margin-left: 10%; /* Add margin to move the links to the right */
+    list-style: none; /* Remove bullets */
+    padding: 0;
+}
+
+.custom-navbar-links .nav-link {
+    position: relative;
+    color: #333 !important;
+    font-size: 17px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.custom-navbar-links .nav-link:hover {
+    color: #248cab !important;
+}
+
+/* Line Hover Effect */
+.custom-navbar-links .nav-link::before {
+    content: "";
+    position: absolute;
+    top: -5px; /* Position line above the link */
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #248cab;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.custom-navbar-links .nav-link:hover::before {
+    transform: scaleX(1); /* Line appears when hovered */
+}
+
+/* Navbar Buttons */
+.custom-navbar-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: auto; /* Push buttons to the right */
+}
+
+.custom-navbar-buttons .btn {
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 2px solid;
+    padding: 5px 10px;
+}
+
+.custom-navbar-buttons .btn-outline-success {
+    color: #248cab;
+    border-color: #248cab;
+}
+
+.custom-navbar-buttons .btn-outline-success:hover {
+    background-color: #248cab;
+    color: white;
+}
+
+.custom-navbar-buttons .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.custom-navbar-buttons .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark-mode .page-content-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+body.dark-mode a {
+    color: #bb86fc;
+}
+
+/* Profile Dropdown Button */
+.custom-navbar-buttons .dropdown-toggle {
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+}
+
+.custom-navbar-buttons .dropdown-toggle i {
+    margin-right: 5px; /* Add space between icon and email */
+}
+
+.custom-navbar-buttons .dropdown-menu {
+    min-width: 200px;
+    text-align: left;
+}
+
+.custom-navbar-buttons .dropdown-menu .dropdown-item {
+    font-size: 14px;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.custom-navbar-buttons .dropdown-menu .dropdown-item:hover {
+    background-color: #f0f0f0;
+    color: #248cab;
+}
+
+/* Profile Button Styling */
+.profile-btn {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 17px;
+    transition: color 0.3s ease;
+}
+
+.profile-btn:hover {
+    color: #248cab; /* Hover color */
+}
+
+.profile-icon {
+    font-size: 24px;
+    margin-right: 8px; /* Space between icon and username */
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.profile-btn:hover .profile-icon {
+    color: #248cab; /* Hover effect for icon */
+}
+
+.dropdown-menu {
+    text-align: left;
+    font-size: 14px;
+}
+
+.dropdown-menu .dropdown-item {
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f0f0f0;
+    color: #248cab;
+}

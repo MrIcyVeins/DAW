@@ -1,42 +1,37 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Redirectionare pentru path-uri
-RewriteRule ^$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^pages/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^pages$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^database/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^database$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^includes/$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^includes$ /loginRegistrationSystem/pages/dashboard.php [R=301,L]
-RewriteRule ^login/$ /loginRegistrationSystem/pages/login [R=301,L]
-RewriteRule ^login$ /loginRegistrationSystem/pages/login [R=301,L]
-RewriteRule ^register/$ /loginRegistrationSystem/pages/register.php [R=301,L]
-RewriteRule ^register$ /loginRegistrationSystem/pages/register.php [R=301,L]
-RewriteRule ^css/$ /loginRegistrationSystem/pages/register.php [R=301,L]
-RewriteRule ^css$ /loginRegistrationSystem/pages/register.php [R=301,L]
+# Remove trailing slash if it exists and is not a directory
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [R=301,L]
 
-
+# Add .php extension if the file without the extension exists
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^([^\.]+)/?$ $1.php [L]
 
-# Mascheaza 404 (not found) cu 403 (forbidden)
+# Redirect specific paths to appropriate PHP files
+RewriteRule ^$ /loginRegistrationSystem/pages/category0 [R=301,L]
+RewriteRule ^pages/$ /loginRegistrationSystem/pages/dashboard [R=301,L]
+RewriteRule ^pages$ /loginRegistrationSystem/pages/dashboard [R=301,L]
+RewriteRule ^login/?$ /loginRegistrationSystem/pages/login [R=301,L]
+RewriteRule ^register/?$ /loginRegistrationSystem/pages/register [R=301,L]
+
+# Return 403 Forbidden for non-existent files or directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ - [F]
-
 </IfModule>
 
-# Previne listarea fisierelor din director
+# Prevent directory listing
 Options -Indexes
 
-# Prevenirea accesului la .htaccess
+# Deny access to sensitive files
 <Files ".htaccess">
     Require all denied
 </Files>
 
-# Prevenirea accessului la alte fisiere 'secrete'
 <Files ".env">
     Require all denied
 </Files>
@@ -45,26 +40,7 @@ Options -Indexes
     Require all denied
 </Files>
 
-# Permite accesul public pentru urmatoarele extensii
+# Allow access to public files (CSS, JS, images, etc.)
 <FilesMatch "\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|otf|eot|webp)$">
     Require all granted
 </FilesMatch>
-
-
-# # Prevent access to sensitive directories
-# <Directory "config">
-#     Require all denied
-# </Directory>
-
-# <Directory "PHPMailer">
-#     Require all denied
-# </Directory>
-
-# <Directory "database">
-#     Require all denied
-# </Directory>
-
-# <Directory "includes">
-#     Require all denied
-# </Directory>
-

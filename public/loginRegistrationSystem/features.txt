@@ -46,6 +46,7 @@ Frontend design: content, buttons, functionalities etc
 
 Bugs
 - fix reset_password not strong vulnerability - DONE
+- fix contact bug - form moves up when inspecting ( should be as newsletter form )
 
 Feature
 - Implement last_email_sent_at for resend verification email ( resend_verification.php ) - so that sending verification emails isn't spamed
