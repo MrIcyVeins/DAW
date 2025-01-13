@@ -5,10 +5,11 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  verified TINYINT(1) NOT NULL DEFAULT 0;
-  verification_token VARCHAR(255) DEFAULT NULL;
-  last_email_sent_at TIMESTAMP NULL; -- not used at this time
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  verified TINYINT(1) NOT NULL DEFAULT 0,
+  verification_token VARCHAR(255) DEFAULT NULL,
+  last_email_sent_at TIMESTAMP NULL, -- not used at this time
+  is_admin TINYINT(1) NOT NULL DEFAULT 0; 
 );
 
 CREATE TABLE articles (
@@ -22,7 +23,10 @@ CREATE TABLE analytics (
     id INT AUTO_INCREMENT PRIMARY KEY,
     page VARCHAR(100) NOT NULL,
     visitor_ip VARCHAR(50) NOT NULL,
-    visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    visit_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    device VARCHAR(50) NOT NULL,
+    browser VARCHAR(50) NOT NULL,
+    geolocation VARCHAR(100) DEFAULT NULL
 );
 
 CREATE TABLE password_resets (

@@ -20,26 +20,27 @@ Taskuri terminate:
 		- poate duce la register 
 		- poate duce la reset password
 		- poate duce la dashboard
+
 6. Va exista posibilitatea de generare si vizualizare de rapoarte (nu doar HTML/PHP/CSV). - NOT DONE
-- make export of favorite articles 
+- export la analitice 
+- fpdf pentru export pdf
 
 7. Elemente statistice ale site-ului (website analytics): vizitatori, accesari etc. - NOT DONE
 - add website analytics - cod in header, tabel in baza de date, afisare statistica in dashboard_admin 
+- jgraph pentru grafuri
 
 8. Formular de contact cu posibilitatea de a transmite email-uri. - DONE 
 	> pagina de contact.php
 9. Integrarea de informatii (nu pagini, elemente ale acestora – parsare continut) din surse externe. - DONE 
 	> folosit rss de la BBC pentru parsare continut din sursa externa
+	- de folosit si alte tipuri de parsare: exemplu html
 10. Terminarea sesiunii. - DONE 
 	> pagina logout.php
-
-
 
 Linkuri utile:
 reCaptcha v2 Admin Console - https://www.google.com/recaptcha/admin/site/714769590
 site - http://echonewsmagazine.iceiy.com/
 github - https://georgescuandreiro/DAW/
-
 
 administrator - poate sa stearga un user 
 - timp de pe pagina 
