@@ -37,7 +37,6 @@ Taskuri terminate:
 Linkuri utile:
 github - https://georgescuandreiro/DAW/
 site - http://echonewsmagazine.iceiy.com/
-baza de date - https://php-myadmin.net/db_structure.php?db=icei_37863787_prod
 pagini admini:
 - https://echonewsmagazine.iceiy.com/pages/manage_users
 - https://echonewsmagazine.iceiy.com/pages/admin_dashboard
