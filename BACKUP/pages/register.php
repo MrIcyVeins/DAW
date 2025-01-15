@@ -6,14 +6,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include configuration
+// Include configuratia (credentiale)
 $config = require __DIR__ . '/../config/config.php';
 
-// reCAPTCHA keys
+// Chei reCAPTCHA
 $recaptchaSiteKey = $config['recaptcha_site_key'];
 $recaptchaSecretKey = $config['recaptcha_secret_key'];
 
-// Include PHPMailer for email verification
+// Include PHPMailer pentru verificare email
 require '../PHPMailer/Exception.php';
 require '../PHPMailer/PHPMailer.php';
 require '../PHPMailer/SMTP.php';
@@ -21,7 +21,7 @@ require '../PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Redirect if already logged in
+// Redirectioneaza daca userul este deja logat
 if (isset($_SESSION['email'])) {
     header("Location: dashboard.php");
     exit();
@@ -29,7 +29,7 @@ if (isset($_SESSION['email'])) {
 
 $error = "";
 
-// Handle registration form submission
+// Controleaza formularul de registrare
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/';
 
-    // Validate reCAPTCHA
+    // Validare reCAPTCHA
     if (empty($recaptchaResponse)) {
         $error = "Please complete the reCAPTCHA.";
     } else {
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!preg_match($pattern, $password)) {
             $error = "Password must include lowercase, uppercase, digit, special character, and be at least 8 characters.";
         } else {
-            // Check if email exists
+            // Verifica daca emailul exista deja in baza de date 
             $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
             $check->bind_param("s", $email);
             $check->execute();
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
-                // Insert user
+                // Insereaza user
                 $stmt = $conn->prepare("INSERT INTO users (email, password_hash) VALUES (?, ?)");
                 $stmt->bind_param("ss", $email, $passwordHash);
                 if ($stmt->execute()) {
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $upd->bind_param("ss", $verificationToken, $email);
                     $upd->execute();
 
-                    // Send verification email
+                    // Trimite email de verificare
                     $mail = new PHPMailer(true);
                     try {
                         $mail->isSMTP();
@@ -128,10 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include "../includes/header_simple.php";
 ?>
 
-<!-- Background Wrapper -->
+<!-- Wrapper pentru background -->
 <div class="login-wrapper">
     
-    <!-- Register Form -->
+    <!-- Formular de registrare -->
     <div class="login-container">
         <h2 class="text-center mb-4">Register</h2>
         <?php if (!empty($error)): ?>
@@ -150,7 +150,7 @@ include "../includes/header_simple.php";
                 <label for="confirm_password" class="form-label">Confirm Password</label>
                 <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
             </div>
-            <!-- reCAPTCHA widget -->
+            <!-- Casuta reCAPTCHA -->
             <div class="recaptcha-container mb-3">
                 <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>
             </div>

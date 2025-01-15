@@ -2,7 +2,7 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Include PHPMailer
+// Include libraria PHPMailer
 require '../PHPMailer/Exception.php';
 require '../PHPMailer/PHPMailer.php';
 require '../PHPMailer/SMTP.php';
@@ -10,7 +10,7 @@ require '../PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Include configuration
+// Include fisierul de configuratie (credentiale)
 $config = require __DIR__ . '/../config/config.php';
 
 // Map configuration values
@@ -24,13 +24,13 @@ $fromName = $config['from_name'];
 $recaptchaSiteKey = $config['recaptcha_site_key'];
 $recaptchaSecretKey = $config['recaptcha_secret_key'];
 
-// Initialize variables
+// Initializeaza variabile
 $error = "";
 $success = "";
 $token = isset($_GET['token']) ? $_GET['token'] : "";
 $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/';
 
-// Handle form submission
+// Controleaza formularul de trimitere
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($recaptchaResponse)) {
             $error = "Please complete the reCAPTCHA.";
         } else {
-            // Validate reCAPTCHA
+            // Validare reCAPTCHA
             $verifyURL = 'https://www.google.com/recaptcha/api/siteverify';
             $data = ['secret' => $recaptchaSecretKey, 'response' => $recaptchaResponse, 'remoteip' => $_SERVER['REMOTE_ADDR']];
 
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Process email and send reset link
+        // Proceseaza emailul si trimite link-ul de reset
         if (empty($error)) {
             $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
             $stmt->bind_param("s", $email);
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif (!empty($token) && isset($_POST['new_password']) && isset($_POST['confirm_password'])) {
-        // Process password reset
+        // Proceseaza resetarea parolei
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
 
@@ -150,7 +150,7 @@ include "../includes/header_simple.php";
 ?>
 
 <div class="login-wrapper">
-    <!-- Reset Password Form -->
+    <!-- Formular parola noua  -->
     <div class="login-container">
         <h2 class="text-center mb-4">Reset Password</h2>
         <?php if (!empty($error)): ?>
@@ -161,7 +161,7 @@ include "../includes/header_simple.php";
         <?php endif; ?>
 
         <?php if (empty($token)): ?>
-            <!-- Request Reset Link -->
+            <!-- Cerere link de resetare -->
             <form method="POST" action="reset_password.php">
                 <div class="mb-3">
                     <label>Your Email Address:</label>
@@ -173,7 +173,7 @@ include "../includes/header_simple.php";
                 <button type="submit" class="btn btn-success w-100">Send Reset Link</button>
             </form>
         <?php else: ?>
-            <!-- Reset Password -->
+            <!-- Resetare parola -->
             <form method="POST" action="reset_password.php?token=<?php echo htmlspecialchars($token); ?>">
                 <div class="mb-3">
                     <label>New Password:</label>
@@ -189,5 +189,5 @@ include "../includes/header_simple.php";
     </div>
 </div>
 
-<!-- reCAPTCHA Script -->
+<!-- Script reCAPTCHA -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>

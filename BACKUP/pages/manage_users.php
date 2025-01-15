@@ -1,17 +1,18 @@
 <?php
 session_start();
 require_once "../database/db_connect.php";
+require_once "../fpdf/fpdf.php"; // Include libraria FPDF
 
-// Check if the user is logged in and is an admin
+// Verifica daca userul este logat si este admin
 if (!isset($_SESSION['email']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
     header("Location: ../pages/login.php");
     exit();
 }
 
-// Handle form submissions
+// Control request POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete_selected'])) {
-        // Bulk delete users, excluding the current admin and other admins
+        // Sterge useri in 'bulk', excluzand adminul curent si alti admini
         if (!empty($_POST['selected_users'])) {
             $userIds = array_map('intval', $_POST['selected_users']);
             $filteredIds = array_filter($userIds, function ($id) use ($conn) {
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif (isset($_POST['delete_single'])) {
-        // Delete a single user, excluding other admins
+        // Sterge un singur user, excluzand alti admini
         $userId = intval($_POST['user_id']);
         $query = "SELECT is_admin FROM users WHERE id = $userId";
         $result = $conn->query($query);
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     } elseif (isset($_POST['edit_password'])) {
-        // Edit a specific user's password, excluding other admins
+        // Editeaza un user specific, excluzand alti admini
         $userId = intval($_POST['user_id']);
         $query = "SELECT is_admin FROM users WHERE id = $userId";
         $result = $conn->query($query);
@@ -65,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all users
+// Extrage toti utilizatorii (fetch)
 $users = [];
 if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
     $search = $conn->real_escape_string(trim($_GET['search']));
@@ -84,6 +85,37 @@ while ($row = $result->fetch_assoc()) {
     $users[] = $row;
 }
 
+// Controleaza exportul la PDF
+if (isset($_POST['export_pdf'])) {
+    $pdf = new FPDF();
+    $pdf->AddPage();
+    $pdf->SetFont('Arial', 'B', 12);
+
+    // Titlu
+    $pdf->Cell(0, 10, 'User List', 0, 1, 'C');
+    $pdf->Ln(10);
+
+    // Header tabel
+    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->Cell(20, 10, 'ID', 1);
+    $pdf->Cell(80, 10, 'Email', 1);
+    $pdf->Cell(30, 10, 'Admin', 1);
+    $pdf->Ln();
+
+    // Corp tabel
+    $pdf->SetFont('Arial', '', 10);
+    foreach ($users as $user) {
+        $pdf->Cell(20, 10, $user['id'], 1);
+        $pdf->Cell(80, 10, $user['email'], 1);
+        $pdf->Cell(30, 10, $user['is_admin'] ? 'Yes' : 'No', 1);
+        $pdf->Ln();
+    }
+
+    // Output PDF
+    $pdf->Output('D', 'user_list.pdf'); // Forteaza numele la download 'user_list.pdf'
+    exit();
+}
+
 include "../includes/header.php";
 include "../includes/navbar.php";
 ?>
@@ -100,7 +132,12 @@ include "../includes/navbar.php";
         </div>
     </form>
 
-    <!-- User List -->
+    <!-- Buton Export la PDF -->
+    <form method="POST" class="mb-4">
+        <button type="submit" name="export_pdf" class="btn btn-success">Export to PDF</button>
+    </form>
+
+    <!-- Lista Useri -->
     <form method="POST" id="userForm">
         <table class="table table-bordered">
             <thead>
@@ -123,14 +160,14 @@ include "../includes/navbar.php";
                     <td><?php echo $user['id']; ?></td>
                     <td><?php echo htmlspecialchars($user['email'] ?? ''); ?></td>
                     <td>
-                        <!-- Edit Password -->
+                        <!-- Editeaza Parola -->
                         <?php if (!$user['is_admin'] || $user['is_admin'] == 0): ?>
                             <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#editPasswordModal<?php echo $user['id']; ?>">Edit Password
                             </button>
                         <?php endif; ?>
 
-                        <!-- Delete User -->
+                        <!-- Sterge User -->
                         <?php if ($user['id'] != $_SESSION['user_id'] && (!$user['is_admin'] || $user['is_admin'] == 0)): ?>
                             <form method="POST" style="display: inline;">
                                 <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
@@ -140,7 +177,7 @@ include "../includes/navbar.php";
                     </td>
                 </tr>
 
-                <!-- Edit Password Modal -->
+                <!-- Editeaza Parola -->
                 <?php if (!$user['is_admin'] || $user['is_admin'] == 0): ?>
                     <div class="modal fade" id="editPasswordModal<?php echo $user['id']; ?>" tabindex="-1"
                          aria-labelledby="editPasswordModalLabel<?php echo $user['id']; ?>" aria-hidden="true">
@@ -171,20 +208,20 @@ include "../includes/navbar.php";
             </tbody>
         </table>
 
-        <!-- Bulk Delete Button -->
+        <!-- Buton stergere in 'bulk' -->
         <button type="submit" name="delete_selected" class="btn btn-danger d-none" id="bulkDeleteButton">Delete Selected</button>
     </form>
 </div>
 
 <script>
-    // Handle "Select All" checkbox
+    // Controleaza casuta "Select All"
     document.getElementById('select_all').addEventListener('change', function () {
         const checkboxes = document.querySelectorAll('.user-checkbox');
         checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         toggleBulkDeleteButton();
     });
 
-    // Toggle bulk delete button visibility
+    // Comutare buton de stergere in 'bulk'
     const checkboxes = document.querySelectorAll('.user-checkbox');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', toggleBulkDeleteButton);

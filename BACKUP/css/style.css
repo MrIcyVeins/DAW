@@ -118,19 +118,19 @@ html, body {
     box-sizing: border-box;
 }
 
-/* Background Contact */
+/* Background folosit la pagina de contact */
 .contact-background {
     background: url('/assets/contact.png') no-repeat center center fixed;
     background-size: cover;
 }
 
-/* Newsletter Background */
+/* Background folosit la pagina de newsletter */
 .newsletter-background {
     background: url('/assets/newsletter.png') no-repeat center center fixed;
     background-size: cover;
 }
 
-/* Page Content Container */
+/* Container pentru continut pagina */
 .page-content-container {
     background: rgba(255, 255, 255, 0.9);
     padding: 30px;
@@ -141,7 +141,7 @@ html, body {
     text-align: center;
 }
 
-/* Login Wrapper */
+/* Wrapper pentru login */
 .login-wrapper {
     background: url('/assets/background.png') no-repeat center center fixed;
     background-size: cover;
@@ -151,7 +151,7 @@ html, body {
     align-items: center;
 }
 
-/* Login Container */
+/* Container pentru login */
 .login-container {
     background: rgba(255, 255, 255, 0.9);
     padding: 30px;
@@ -161,7 +161,7 @@ html, body {
     width: 90%;
 }
 
-/* Responsive Design */
+/* Navbar custom pentru ecrane mici */
 @media (max-width: 768px) {
     .custom-navbar-links {
         flex-direction: column;
@@ -174,16 +174,16 @@ html, body {
     }
 
     .custom-navbar-links .nav-link {
-        font-size: 14px; /* Smaller font size for small screens */
+        font-size: 14px; /* Marime font mica pentru ecrane mici */
         padding: 8px 5px;
     }
 
     .custom-navbar-buttons .btn {
-        font-size: 12px; /* Smaller font size for buttons on small screens */
+        font-size: 12px; /* Marime butoane mai mici pentru ecrane mici */
     }
 
     .logo-container img.site-logo {
-        max-width: 120px; /* Smaller logo */
+        max-width: 120px; /* Logo mai mic */
     }
 
     .page-content-container {
@@ -192,35 +192,36 @@ html, body {
     }
 }
 
+/* Navbar custom pentru ecrane mobil */
 @media (max-width: 480px) {
     .custom-navbar-links .nav-link {
-        font-size: 12px; /* font mic pentr
+        font-size: 12px; /* Font pentru mobil */
         padding: 6px 4px;
     }
 
     .custom-navbar-buttons .btn {
-        font-size: 10px; /* Adjust button font size for very small screens */
+        font-size: 10px; /* Marime butoane pentru mobil */
     }
 }
 
-/* Center the reCAPTCHA widget */
+/* Casuta reCAPTCHA */
 .recaptcha-container {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center;     /* Center vertically (optional if needed) */
-    width: 100%;             /* Ensure full width for proper centering */
-    margin-bottom: 1rem;     /* Add spacing below the reCAPTCHA */
+    justify-content: center; /* Centrare orizontala */
+    align-items: center;
+    width: 100%;             /* Latime */
+    margin-bottom: 1rem;     /* Adauga spatiere sub reCAPTCHA */
 }
 
 .mt-4.text-center {
-    display: flex; /* Flexbox layout for alignment */
-    justify-content: center; /* Center child elements horizontally */
-    align-items: center; /* Center child elements vertically (if needed) */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    padding: 10px; /* Add spacing */
+    display: flex; /* Aliniere tip flexbox */
+    justify-content: center; /* Centrare orizontala */
+    align-items: center;
+    overflow-x: hidden; /* Previne scroll orizontal */
+    padding: 10px; /* Adaugare spatiere */
 }
 
-/* Simplified profile button styling */
+/* Buton profil */
 .profile-btn {
     background: none;
     border: none;

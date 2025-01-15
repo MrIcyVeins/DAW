@@ -2,7 +2,7 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Include PHPMailer libraries
+// Include librariile PHPMailer
 require '../PHPMailer/Exception.php';
 require '../PHPMailer/PHPMailer.php';
 require '../PHPMailer/SMTP.php';
@@ -10,10 +10,10 @@ require '../PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Încarcă configurația
+// Incarca configuratia ( credentiale )
 $config = require __DIR__ . '/../config/config.php';
 
-// Atribuie valorile de configurare
+// Atribuie valorile de configuratie in variabile
 $smtpHost = $config['smtp_host'];
 $smtpPort = $config['smtp_port'];
 $smtpEncryption = $config['smtp_encryption'];
@@ -22,20 +22,20 @@ $smtpPassword = $config['smtp_password'];
 $fromEmail = $config['from_email'];
 $fromName = $config['from_name'];
 $toEmail = $config['to_email'];
-$recaptchaSecretKey = $config['recaptcha_secret_key']; // Cheia secretă reCAPTCHA
+$recaptchaSecretKey = $config['recaptcha_secret_key']; // Cheia secreta reCAPTCHA
 
-// Inițializează mesaje de eroare și succes
+// Initializare mesaje de eroare si success
 $error = "";
 $success = "";
 
-// Verifică dacă utilizatorul este autentificat
+// Verifica daca utilizatorul este autentificat
 if (!isset($_SESSION['email'])) {
     $_SESSION['contact_error'] = "You must be logged in to send a message.";
     header("Location: contact.php");
     exit();
 }
 
-// Dacă formularul este trimis
+// Formularul de trimitere
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Continuă cu validarea mesajului și trimiterea emailului
     if (empty($name) || empty($email) || empty($message)) {
         $_SESSION['contact_error'] = "All fields are required.";
-        header("Location: contact.php");
+        header("Location: contact");
         exit();
     }
 
@@ -93,11 +93,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sss", $name, $email, $message);
     if (!$stmt->execute()) {
         $_SESSION['contact_error'] = "Failed to save your message. Please try again later.";
-        header("Location: contact.php");
+        header("Location: contact");
         exit();
     }
 
-    // Trimite email către echipa de suport
+    // Trimite email către echipa de suport/contact
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
@@ -125,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['contact_error'] = "Failed to send your message. Please try again later.";
     }
 
-    header("Location: contact.php");
+    header("Location: contact");
     exit();
 }
 ?>

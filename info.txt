@@ -10,40 +10,35 @@ Taskuri terminate:
 3. Va exista o pagina de autentificare/înregistrare de utilizatori. - DONE 
 	> pagina de autentificare - login.php
 	> pagina de inregistrare - register.php
-4. Vor exista mai multe categorii de utilizatori. Fiecare categorie va avea anumite actiuni specifice. - NOT DONE
-- add admin user 
+4. Vor exista mai multe categorii de utilizatori. Fiecare categorie va avea anumite actiuni specifice. - DONE
+	> admin user - adaugat in tabelul de useri coloana is_admin
+	> make admin/creator do custom stuff / admin_dashboard + manage_users - paginile adminilor 
 - add creator user (optional) 
-- make admin/creator do custom stuff ( delete user/create article )
-
 5. Aplicatia va contine mai multe pagini dinamice cu legaturi între ele. - DONE 
 	> pagina de login (exemplu)
-		- poate duce la register 
-		- poate duce la reset password
-		- poate duce la dashboard
+		> poate duce la register 
+		> poate duce la reset password
+		> poate duce la dashboard
+6. Va exista posibilitatea de generare si vizualizare de rapoarte (nu doar HTML/PHP/CSV). - DONE
+		> fpdf pentru export pdf - folosit pentru manage_users > buton export pdf
+- export la analitice - (optional)
 
-6. Va exista posibilitatea de generare si vizualizare de rapoarte (nu doar HTML/PHP/CSV). - NOT DONE
-- export la analitice 
-- fpdf pentru export pdf
-
-7. Elemente statistice ale site-ului (website analytics): vizitatori, accesari etc. - NOT DONE
-- add website analytics - cod in header, tabel in baza de date, afisare statistica in dashboard_admin 
-- jgraph pentru grafuri
-
+7. Elemente statistice ale site-ului (website analytics): vizitatori, accesari etc. - DONE
+		> add website analytics - cod in header, tabel in baza de date (analytics), afisare statistica in dashboard_admin 
+		> jgraph pentru grafuri
 8. Formular de contact cu posibilitatea de a transmite email-uri. - DONE 
-	> pagina de contact.php
+	> pagina de contact
 9. Integrarea de informatii (nu pagini, elemente ale acestora – parsare continut) din surse externe. - DONE 
-	> folosit rss de la BBC pentru parsare continut din sursa externa
-	- de folosit si alte tipuri de parsare: exemplu html
+	> folosit rss de la BBC pentru parsare continut din sursa externa (nu recomandat)
+	> de folosit si alte tipuri de parsare: html ( parsare html din wikipedia pe pagina about_us )
 10. Terminarea sesiunii. - DONE 
 	> pagina logout.php
 
 Linkuri utile:
-reCaptcha v2 Admin Console - https://www.google.com/recaptcha/admin/site/714769590
-site - http://echonewsmagazine.iceiy.com/
 github - https://georgescuandreiro/DAW/
-
-administrator - poate sa stearga un user 
-- timp de pe pagina 
-- ultima pagina vizualizata 
-- sistemele de operare 
-- pie chart ( distributia pe SO pe dispozitive ) 
+site - http://echonewsmagazine.iceiy.com/
+baza de date - https://php-myadmin.net/db_structure.php?db=icei_37863787_prod
+pagini admini:
+- https://echonewsmagazine.iceiy.com/pages/manage_users
+- https://echonewsmagazine.iceiy.com/pages/admin_dashboard
+reCaptcha v2 Admin Console - https://www.google.com/recaptcha/admin/site/714769590

@@ -2,27 +2,27 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Include header and navbar
+// Include header si navbar
 include "../includes/header.php";
 include "../includes/navbar.php";
 
-// RSS Feed URL for BBC World News
+// Feed RSS din BBC NEWS 
 $feedUrl = "https://feeds.bbci.co.uk/news/world/rss.xml";
 $rssContent = @simplexml_load_file($feedUrl);
 
-// Articles array for processing
+// Array articole pentru procesare
 $articles = [];
 if ($rssContent && isset($rssContent->channel->item)) {
     foreach ($rssContent->channel->item as $item) {
         $title       = (string) $item->title;
         $link        = (string) $item->link;
-        $description = strip_tags((string) $item->description); // Clean description
+        $description = strip_tags((string) $item->description); // Descriere
         $pubDate     = (string) $item->pubDate;
 
-        // Generate a unique ID for each article (e.g., hash of the title)
+        // Generare Id unic pentru fiecare articol (hash)
         $articleId = md5($title);
 
-        // Add article to the array
+        // Adaugare articole in array
         $articles[] = [
             'id'          => $articleId,
             'title'       => $title,
@@ -33,17 +33,17 @@ if ($rssContent && isset($rssContent->channel->item)) {
     }
 }
 
-// Sort articles by date (newest first)
+// Sortare articole dupa data (Cel mai nou primul)
 usort($articles, function ($a, $b) {
     return strtotime($b['pubDate']) - strtotime($a['pubDate']);
 });
 
-// Pagination: 6 articles per page
+// Paginare: 6 articole pe pagina
 $articlesPerPage = 6;
 $totalArticles   = count($articles);
 $totalPages      = ceil($totalArticles / $articlesPerPage);
 
-// Current page (from ?page= ), default is 1
+// Pagina curenta (from ?page= ), default este 1
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 if ($page < 1) {
     $page = 1;
@@ -51,11 +51,11 @@ if ($page < 1) {
     $page = $totalPages;
 }
 
-// Determine articles for the current page
+// Determina articolele din pagina curenta
 $startIndex      = ($page - 1) * $articlesPerPage;
 $displayArticles = array_slice($articles, $startIndex, $articlesPerPage);
 
-// Helper Functions
+// Functie helper ( pentru like-uri )
 function hasLiked($conn, $userId, $articleId) {
     $stmt = $conn->prepare("SELECT 1 FROM likes WHERE user_id = ? AND article_id = ?");
     $stmt->bind_param("is", $userId, $articleId);
@@ -80,16 +80,16 @@ function isFavorite($conn, $userId, $articleId) {
 ?>
 
 <div class="container mt-5">
-    <!-- Page Title -->
+    <!-- Titlu pagina -->
     <div class="container mt-5" style="position: relative; height: 300px; background: url('/assets/world-news.png') no-repeat center center; background-size: cover; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);">
-    <!-- Page Title -->
+    <!-- Titlu pagina -->
     <h2 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; padding: 15px 30px; background: rgba(0, 0, 0, 0.7); box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); border-radius: 10px; text-align: center; font-weight: bold; z-index: 1;">
         World News & Politics
     </h2>
 </div>
     <p class="text-center" style="font-style: italic;">Get the latest updates from around the globe.</p>
 
-    <!-- Top Stories Section -->
+    <!-- Sectiunea Top Stories -->
     <div class="newspaper-container mb-5 p-4" style="border: 2px solid #000; background-color: #f8f8f8; font-family: 'Times New Roman', serif;">
         <h4 class="text-center mb-4" style="text-transform: uppercase;">Top Stories</h4>
         <div class="row gx-4">
@@ -109,7 +109,7 @@ function isFavorite($conn, $userId, $articleId) {
         </div>
     </div>
 
-    <!-- News Ticker -->
+    <!-- Temporizator pentru noutati -->
     <div class="news-ticker mb-4" style="background-color: #000; color: #fff; padding: 10px; font-size: 16px;">
         <marquee behavior="scroll" direction="left">
             <?php foreach (array_slice($articles, 0, 5) as $article): ?>
@@ -118,7 +118,7 @@ function isFavorite($conn, $userId, $articleId) {
         </marquee>
     </div>
 
-    <!-- Articles Grid -->
+    <!-- Grid articole -->
     <div class="row row-cols-1 row-cols-md-2 g-4">
         <?php if (empty($displayArticles)): ?>
             <div class="col">
@@ -138,7 +138,7 @@ function isFavorite($conn, $userId, $articleId) {
                             <p class="card-text"><?= htmlspecialchars($article['description']) ?></p>
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <!-- Like Button -->
+                            <!-- Buton Like -->
                             <button class="btn btn-sm btn-light like-btn" 
                                     data-article-id="<?= $article['id'] ?>" 
                                     data-liked="<?= isset($_SESSION['user_id']) && hasLiked($conn, $_SESSION['user_id'], $article['id']) ? 'true' : 'false' ?>">
@@ -146,7 +146,7 @@ function isFavorite($conn, $userId, $articleId) {
                                 <span class="like-count"><?= getLikeCount($conn, $article['id']) ?></span>
                                 Like
                             </button>
-                            <!-- Favorite Button -->
+                            <!-- Buton Favorite -->
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <button class="btn btn-sm btn-light favorite-btn" 
                                         data-article-id="<?= $article['id'] ?>" 
@@ -158,7 +158,7 @@ function isFavorite($conn, $userId, $articleId) {
                                 </button>
                             <?php endif; ?>
 
-                            <!-- Share Button -->
+                            <!-- Buton Share -->
                             <div class="dropdown">
                                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Share
@@ -176,12 +176,12 @@ function isFavorite($conn, $userId, $articleId) {
         <?php endif; ?>
     </div>
 
-    <!-- Pagination -->
+    <!-- Paginare -->
     <div class="mt-4 text-center">
         <?php if ($totalPages > 1): ?>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <!-- Previous Page Link -->
+                    <!-- Link pagina precedenta -->
                     <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
                         <a class="page-link" href="?page=<?= max(1, $page - 1) ?>" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
@@ -189,25 +189,25 @@ function isFavorite($conn, $userId, $articleId) {
                     </li>
 
                     <?php
-                    // Determine the range of pages to display
-                    $maxVisiblePages = 6; // Maximum pages to show
+                    // Determina range-ul de pagini pentru afisaj
+                    $maxVisiblePages = 6; // Maximul de pagini care sa fie afisate
                     $startPage = max(1, $page - floor($maxVisiblePages / 2));
                     $endPage = min($totalPages, $startPage + $maxVisiblePages - 1);
 
-                    // Adjust start page if we're near the end
+                    // Ajustare pagina de start daca este spre finalul sirului
                     if ($endPage - $startPage + 1 < $maxVisiblePages) {
                         $startPage = max(1, $endPage - $maxVisiblePages + 1);
                     }
                     ?>
 
-                    <!-- Page Number Links -->
+                    <!-- Linkuri numar de pagina -->
                     <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                         <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
                             <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
                         </li>
                     <?php endfor; ?>
 
-                    <!-- Next Page Link -->
+                    <!-- Link pagina noua -->
                     <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
                         <a class="page-link" href="?page=<?= min($totalPages, $page + 1) ?>" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>

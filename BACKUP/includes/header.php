@@ -1,27 +1,27 @@
 <?php
-// Disable displaying errors on the screen
-ini_set('display_errors', 1);  // Enable error reporting for debugging
-error_reporting(E_ALL);        // Show all errors
+// Dezactivarea afisarii erorilor pe ecran
+ini_set('display_errors', 1);  // Activeaza error reporting for debugging
+error_reporting(E_ALL);        // Arata erorile
 
-// Start the session for user tracking (only if it's not already started)
+// Porneste sesiunea daca nu este pornita deja
 if (session_status() == PHP_SESSION_NONE) {
-    session_start(); // Only start the session if it's not already active
+    session_start();
 }
 
-// Include database connection
+// Include conexiunea la baza de date
 require_once "../database/db_connect.php";
 
-// Set the correct timezone to Romania Time (EET/EEST)
-date_default_timezone_set('Europe/Bucharest'); // Ensure time is set to Romania's timezone
+// Seteaza zona de timp Romania Time (EET/EEST)
+date_default_timezone_set('Europe/Bucharest'); // Zona Europe/Bucharest
 
-// Capture analytics data
+// Captureaza date pentru analytics
 function captureUniqueAnalytics($conn)
 {
-    // Capturing page and IP address
-    $page = $_SERVER['REQUEST_URI']; // Current page URL
-    $visitor_ip = $_SERVER['REMOTE_ADDR']; // Visitor's IP address
+    // Captureaza pagina si adresa IP
+    $page = $_SERVER['REQUEST_URI']; // URL pagina curenta
+    $visitor_ip = $_SERVER['REMOTE_ADDR']; // Adresa IP a vizitatorului
 
-    // Detect OS from the User-Agent string
+    // Detecteaza SO (sistemul de operare ) din stringul de User-Agent
     $os = 'Unknown OS';
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
     if (preg_match('/Windows/i', $userAgent)) {
@@ -34,15 +34,15 @@ function captureUniqueAnalytics($conn)
         $os = 'iOS';
     }
 
-    // Detect device type
-    $device_type = 'Desktop'; // Default to Desktop
+    // Detecteaza tipul de device
+    $device_type = 'Desktop'; // Default este Desktop
     if (preg_match('/mobile/i', $userAgent)) {
         $device_type = 'Mobile';
     } elseif (preg_match('/tablet/i', $userAgent)) {
         $device_type = 'Tablet';
     }
 
-    // Detect browser
+    // Detect browserul
     $browser = 'Unknown Browser';
     if (strpos($userAgent, 'Chrome') !== false) {
         $browser = 'Chrome';
@@ -56,13 +56,13 @@ function captureUniqueAnalytics($conn)
         $browser = 'Internet Explorer';
     }
 
-    // Referrer
+    // Pagina de referinta
     $referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
 
-    // Get the current time in the Romania timezone
-    $currentTime = date('Y-m-d H:i:s'); // Get the current time in PHP
+    // Captureaza zona curenta (Romania)
+    $currentTime = date('Y-m-d H:i:s');
 
-    // Check if the visit is unique (same page, IP, within the last 24 hours)
+    // Verifica daca vizita este unica (aceeasi pagina, acelasi IP, interval de 24 ore)
     $query = "SELECT COUNT(*) AS visit_count 
               FROM analytics 
               WHERE page = ? AND visitor_ip = ? AND visit_time >= NOW() - INTERVAL 1 DAY";
@@ -74,7 +74,7 @@ function captureUniqueAnalytics($conn)
         $stmt->fetch();
         $stmt->close();
 
-        // If no record exists for the last 24 hours, insert the new visit
+        // Daca nu exista nici o intrare in 24 ore, insereaza vizita noua
         if ($visit_count == 0) {
             $insertQuery = "INSERT INTO analytics (page, visitor_ip, visit_time, os, device_type, browser, referrer) 
                             VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -92,7 +92,7 @@ function captureUniqueAnalytics($conn)
     }
 }
 
-// Call the function to capture analytics
+// Cheama functia pentru a captura datele analytics
 captureUniqueAnalytics($conn);
 ?>
 
@@ -126,7 +126,6 @@ captureUniqueAnalytics($conn);
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Your Page Content Goes Here -->
 
     <!-- Include Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

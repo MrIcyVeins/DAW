@@ -2,36 +2,36 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Include configuration
+// Include configuratia (credentiale)
 $config = require __DIR__ . '/../config/config.php';
 
-// reCAPTCHA keys
+// Chei reCAPTCHA
 $recaptchaSiteKey = $config['recaptcha_site_key'];
 $recaptchaSecretKey = $config['recaptcha_secret_key'];
 
-// Redirect to dashboard if already logged in
+// Redirectioneaza catre dashboard daca userul este deja logat 
 if (isset($_SESSION['email'])) {
     header("Location: dashboard");
     exit();
 }
 
-// Initialize error message and failed attempts counter
+// Initializare mesaj eroare si contor pentru incercari de logare
 $error = "";
 if (!isset($_SESSION['failed_attempts'])) {
-    $_SESSION['failed_attempts'] = 0; // Initialize the failed attempts counter
+    $_SESSION['failed_attempts'] = 0; // Initializare contor pentru incercari esuate de logare
 }
 
-// Handle POST request for login
+// Controleaza requesturile POST pentru login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
-    // Check if reCAPTCHA is required
+    // Verifica daca reCAPTCHA este necesar ( apare doar dupa 3 incercari de logare esuate )
     $recaptchaRequired = $_SESSION['failed_attempts'] >= 3;
 
     if ($recaptchaRequired) {
-        // reCAPTCHA validation
+        // Validare reCAPTCHA
         if (!empty($recaptchaResponse)) {
             $verifyURL = 'https://www.google.com/recaptcha/api/siteverify';
             $data = [
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // If no error, verify login credentials
+    // Daca nu exista eroare, verifica credentialele
     if (empty($error)) {
         $stmt = $conn->prepare("SELECT id, password_hash, is_admin FROM users WHERE email = ?");
         if ($stmt) {
@@ -68,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($res->num_rows === 1) {
                 $row = $res->fetch_assoc();
                 if (password_verify($password, $row['password_hash'])) {
-                    // Successful login
-                    $_SESSION['user_id'] = $row['id']; // Set user ID in session
-                    $_SESSION['email'] = $email; // Optional: Store email
-                    $_SESSION['is_admin'] = $row['is_admin']; // Set admin flag in session
-                    $_SESSION['failed_attempts'] = 0; // Reset failed attempts
+                    // Logare cu success
+                    $_SESSION['user_id'] = $row['id']; // Seteaza ID sesiune
+                    $_SESSION['email'] = $email; // Seteaza emailul
+                    $_SESSION['is_admin'] = $row['is_admin']; // Seteaza flagul de admin (is_admin)
+                    $_SESSION['failed_attempts'] = 0; // Reseteaza incercari esuate de login (contorul)
                     header("Location: dashboard");
                     exit();
                 } else {
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Increment failed attempts if login fails
+    // Incremente pentru incercari de logare esuate
     if (!empty($error)) {
         $_SESSION['failed_attempts']++;
     }
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include "../includes/header_simple.php";
 ?>
-<!-- HTML Content Below -->
+<!-- Cod HTML pentru formular -->
 <div class="login-wrapper">
     <div class="login-container">
         <h2 class="text-center mb-4">Login</h2>
@@ -110,7 +110,7 @@ include "../includes/header_simple.php";
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" id="password" class="form-control" required>
             </div>
-            <!-- Conditionally Show reCAPTCHA -->
+            <!-- Arata reCAPTCHA conditionat de contor -->
             <?php if ($_SESSION['failed_attempts'] >= 3): ?>
                 <div class="recaptcha-container mb-3">
                     <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($recaptchaSiteKey); ?>"></div>

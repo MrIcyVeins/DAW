@@ -2,15 +2,15 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Include header and navbar
+// Include header si navbar
 include "../includes/header.php";
 include "../includes/navbar.php";
 
-// RSS Feed URL
+// Feed RSS pentru world news
 $feedUrl = "https://feeds.bbci.co.uk/news/world/rss.xml";
 $rssContent = @simplexml_load_file($feedUrl);
 
-// Articles array
+// Array articole pentru procesare
 $articles = [];
 if ($rssContent && isset($rssContent->channel->item)) {
     foreach ($rssContent->channel->item as $item) {
@@ -19,7 +19,7 @@ if ($rssContent && isset($rssContent->channel->item)) {
         $description = strip_tags((string) $item->description);
         $pubDate     = (string) $item->pubDate;
 
-        // Generate a unique ID for each article
+        // Generare Id unic pentru fiecare articol (hash)
         $articleId = md5($title);
 
         $articles[] = [
@@ -32,12 +32,12 @@ if ($rssContent && isset($rssContent->channel->item)) {
     }
 }
 
-// Sort articles by date (newest first)
+// Sortare articole dupa data (Cel mai nou primul)
 usort($articles, function ($a, $b) {
     return strtotime($b['pubDate']) - strtotime($a['pubDate']);
 });
 
-// Pagination
+// Paginare: 6 articole pe pagina
 $articlesPerPage = 6;
 $totalArticles   = count($articles);
 $totalPages      = ceil($totalArticles / $articlesPerPage);
@@ -50,7 +50,7 @@ if ($page < 1) {
 $startIndex      = ($page - 1) * $articlesPerPage;
 $displayArticles = array_slice($articles, $startIndex, $articlesPerPage);
 
-// Helper Functions
+// Functie helper ( pentru like-uri )
 function hasLiked($conn, $userId, $articleId) {
     $stmt = $conn->prepare("SELECT 1 FROM likes WHERE user_id = ? AND article_id = ?");
     $stmt->bind_param("is", $userId, $articleId);

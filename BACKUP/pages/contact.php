@@ -2,32 +2,32 @@
 session_start();
 require_once "../database/db_connect.php";
 
-// Load configuration
+// Incarca configuratia (credentiale)
 $config = require __DIR__ . '/../config/config.php';
 
-// Include header and navbar
+// Include header si navbar
 include "../includes/header.php";
 include "../includes/navbar.php";
 
-// Check if the user is logged in
+// Verifica daca userul este logat
 $isLoggedIn = isset($_SESSION['email']);
 ?>
 
-<!-- Background Wrapper -->
+<!-- Wrapper pentru background -->
 <div class="page-wrapper contact-background">
-    <!-- Contact Form Container -->
+    <!-- Container formular de Contact -->
     <div class="page-content-container">
         <h2 class="mb-4">Contact Us</h2>
         <p>If you have any questions, feedback, or concerns, feel free to reach out to us using the form below.</p>
 
         <?php if (!$isLoggedIn): ?>
-            <!-- Message for non-authenticated users -->
+            <!-- Mesaj pentru useri neautentificati -->
             <div class="alert alert-warning">
                 You must <a href="login" class="alert-link">log in</a> or <a href="register" class="alert-link">register</a> to use the contact form.
             </div>
         <?php else: ?>
-            <!-- Contact form for authenticated users -->
-            <form method="POST" action="contact_process.php">
+            <!-- Forumalr de contact pentru user autentificati -->
+            <form method="POST" action="contact_process">
                 <div class="mb-3">
                     <label for="name" class="form-label">Your Name:</label>
                     <input type="text" class="form-control" id="name" name="name" required>
@@ -41,7 +41,7 @@ $isLoggedIn = isset($_SESSION['email']);
                     <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                 </div>
                 
-                <!-- reCAPTCHA widget -->
+                <!-- reCAPTCHA v2 -->
                 <div class="recaptcha-container">
                     <div class="g-recaptcha" data-sitekey="<?php echo htmlspecialchars($config['recaptcha_site_key']); ?>"></div>
                 </div>

@@ -1,3 +1,4 @@
+<!-- Acest script nu este folosit -->
 <?php
 session_start();
 if (!isset($_SESSION['email'])) {
@@ -12,7 +13,7 @@ include "../includes/header_simple.php";
     <div class="page-content-container">
         <h2>Settings</h2>
 
-        <!-- Language Selector -->
+        <!-- Selector de limba -->
         <h4>Language</h4>
         <select class="form-select mb-3">
             <option value="en" selected>English</option>
@@ -20,11 +21,11 @@ include "../includes/header_simple.php";
             <option value="fr">French</option>
         </select>
 
-        <!-- Theme Toggle -->
+        <!-- Comutator tematica -->
         <h4>Theme</h4>
         <button class="btn btn-secondary mb-3" onclick="toggleTheme()">Toggle Dark Mode</button>
 
-        <!-- Account Deletion -->
+        <!-- Stergere cont -->
         <h4>Delete Account</h4>
         <form method="POST" action="delete_account.php">
             <div class="mb-3">

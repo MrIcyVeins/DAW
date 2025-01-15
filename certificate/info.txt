@@ -1,0 +1,3 @@
+# Inspect CERTIFICATE
+
+openssl x509 -in aeonfree.pem -text -noout

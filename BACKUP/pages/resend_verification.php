@@ -1,3 +1,4 @@
+<!-- Acest script nu este folosit -->
 <?php
 session_start();
 

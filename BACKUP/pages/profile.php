@@ -9,7 +9,7 @@ if (!isset($_SESSION['email'])) {
 
 $userEmail = $_SESSION['email'];
 
-// Fetch user details
+// Extrage detalii user
 $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
 $stmt->bind_param("s", $userEmail);
 $stmt->execute();
@@ -19,6 +19,7 @@ include "../includes/header.php";
 include "../includes/navbar.php";
 ?>
 
+<!-- Afiseaza date profil si butoane catre alte pagini -->
 <div class="container mt-5">
     <h2 class="text-center mb-4" style="font-family: 'Times New Roman', serif;">Your Profile</h2>
     <div class="row justify-content-center">

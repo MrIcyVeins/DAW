@@ -1,3 +1,5 @@
+<!-- Backup script pentru admin_dashboard -->
+
 <?php
 
 ob_start(); // Start output buffering
