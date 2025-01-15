@@ -1,8 +1,8 @@
 <?php
-$servername = "sql311.iceiy.com";
-$username = "icei_37863787";
-$password = "caKDl8ugbPr0";
-$dbname = "icei_37863787_prod";
+$servername = "";
+$username = "";
+$password = "";
+$dbname = "";
 
 // Creare conexiune
 $conn = new mysqli($servername, $username, $password, $dbname);
